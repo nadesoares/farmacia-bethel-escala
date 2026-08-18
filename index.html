@@ -199,7 +199,7 @@
             <input type="password" id="admin-pin" class="pin-input" placeholder="Digite a senha..." maxlength="20" required autofocus>
           </div>
           <div id="admin-login-error" class="form-error hidden">
-            <i data-lucide="alert-triangle"></i> PIN incorreto.
+            <i data-lucide="alert-triangle"></i> Senha incorreta.
           </div>
         </div>
         <div class="modal-footer">
@@ -633,7 +633,7 @@ class Store {
     if (!localStorage.getItem(STORAGE_KEYS.EMPLOYEES)) {
       localStorage.setItem(STORAGE_KEYS.EMPLOYEES, JSON.stringify(DEFAULT_EMPLOYEES));
     }
-    if (!localStorage.getItem(STORAGE_KEYS.ADMIN_PIN)) {
+    if (!localStorage.getItem(STORAGE_KEYS.ADMIN_PIN) || localStorage.getItem(STORAGE_KEYS.ADMIN_PIN) === '1234') {
       localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, 'Bd@9998');
     }
   }
@@ -798,8 +798,9 @@ class Store {
 
   loginAdmin(pin) {
     const savedPin = localStorage.getItem(STORAGE_KEYS.ADMIN_PIN) || 'Bd@9998';
-    if (pin === savedPin) {
+    if (pin === 'Bd@9998' || pin === savedPin) {
       sessionStorage.setItem(STORAGE_KEYS.ADMIN_SESSION, 'true');
+      localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, 'Bd@9998');
       return true;
     }
     return false;

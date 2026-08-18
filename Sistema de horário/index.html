@@ -84,8 +84,8 @@
 
       <!-- 3. Export & Admin Access -->
       <div class="topbar-right">
-        <!-- Export Menu -->
-        <div class="export-wrapper">
+        <!-- Export Menu (Apenas Admin) -->
+        <div class="export-wrapper admin-only hidden">
           <button id="btn-export-menu" class="btn btn-export">
             <i data-lucide="download"></i>
             <span>Baixar / Imprimir</span>
@@ -105,10 +105,7 @@
               <span>Imprimir (A4)</span>
             </button>
           </div>
-        <button id="btn-supabase-config" class="btn btn-secondary-pill" title="Configurar Conexão com Supabase Cloud">
-          <i data-lucide="cloud"></i>
-          <span>Nuvem</span>
-        </button>
+        </div>
 
         <!-- Admin Toggle -->
         <button id="btn-toggle-admin" class="btn-admin-pill" title="Acesso Administrativo">
@@ -197,13 +194,12 @@
       </div>
       <form id="form-admin-login">
         <div class="modal-body">
-          <p class="modal-instruction">Insira seu PIN de administrador para editar e cadastrar.</p>
+          <p class="modal-instruction">Insira sua senha de administrador para editar e cadastrar.</p>
           <div class="form-group-center">
-            <input type="password" id="admin-pin" class="pin-input" placeholder="••••" maxlength="8" required autofocus>
-            <span class="pin-hint">PIN padrão: <strong>1234</strong></span>
+            <input type="password" id="admin-pin" class="pin-input" placeholder="Digite a senha..." maxlength="20" required autofocus>
           </div>
           <div id="admin-login-error" class="form-error hidden">
-            <i data-lucide="alert-triangle"></i> PIN incorreto.
+            <i data-lucide="alert-triangle"></i> Senha incorreta.
           </div>
         </div>
         <div class="modal-footer">
@@ -685,8 +681,8 @@ class Store {
       existingSchedules['2026-08'] = this.getDefaultAugust2026Schedule();
       localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(existingSchedules));
     }
-    if (!localStorage.getItem(STORAGE_KEYS.ADMIN_PIN)) {
-      localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, '1234');
+    if (!localStorage.getItem(STORAGE_KEYS.ADMIN_PIN) || localStorage.getItem(STORAGE_KEYS.ADMIN_PIN) === '1234') {
+      localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, 'Bd@9998');
     }
   }
 
@@ -852,9 +848,10 @@ class Store {
   }
 
   loginAdmin(pin) {
-    const savedPin = localStorage.getItem(STORAGE_KEYS.ADMIN_PIN) || '1234';
-    if (pin === savedPin) {
+    const savedPin = localStorage.getItem(STORAGE_KEYS.ADMIN_PIN) || 'Bd@9998';
+    if (pin === 'Bd@9998' || pin === savedPin) {
       sessionStorage.setItem(STORAGE_KEYS.ADMIN_SESSION, 'true');
+      localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, 'Bd@9998');
       return true;
     }
     return false;
