@@ -105,10 +105,7 @@
               <span>Imprimir (A4)</span>
             </button>
           </div>
-        <button id="btn-supabase-config" class="btn btn-secondary-pill" title="Configurar Conexão com Supabase Cloud">
-          <i data-lucide="cloud"></i>
-          <span>Nuvem</span>
-        </button>
+        
 
         <!-- Admin Toggle -->
         <button id="btn-toggle-admin" class="btn-admin-pill" title="Acesso Administrativo">
@@ -197,10 +194,9 @@
       </div>
       <form id="form-admin-login">
         <div class="modal-body">
-          <p class="modal-instruction">Insira seu PIN de administrador para editar e cadastrar.</p>
+          <p class="modal-instruction">Insira sua senha de administrador para editar e cadastrar.</p>
           <div class="form-group-center">
-            <input type="password" id="admin-pin" class="pin-input" placeholder="••••" maxlength="8" required autofocus>
-            <span class="pin-hint">PIN padrão: <strong>1234</strong></span>
+            <input type="password" id="admin-pin" class="pin-input" placeholder="Digite a senha..." maxlength="20" required autofocus>
           </div>
           <div id="admin-login-error" class="form-error hidden">
             <i data-lucide="alert-triangle"></i> PIN incorreto.
@@ -686,7 +682,7 @@ class Store {
       localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(existingSchedules));
     }
     if (!localStorage.getItem(STORAGE_KEYS.ADMIN_PIN)) {
-      localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, '1234');
+      localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, 'Bd@9998');
     }
   }
 
@@ -852,7 +848,7 @@ class Store {
   }
 
   loginAdmin(pin) {
-    const savedPin = localStorage.getItem(STORAGE_KEYS.ADMIN_PIN) || '1234';
+    const savedPin = localStorage.getItem(STORAGE_KEYS.ADMIN_PIN) || 'Bd@9998';
     if (pin === savedPin) {
       sessionStorage.setItem(STORAGE_KEYS.ADMIN_SESSION, 'true');
       return true;
@@ -1412,8 +1408,9 @@ class CalendarManager {
   constructor(store, scheduler) {
     this.store = store;
     this.scheduler = scheduler;
-    this.currentYear = 2026;
-    this.currentMonth = 8;
+    const now = new Date();
+    this.currentYear = now.getFullYear();
+    this.currentMonth = now.getMonth() + 1;
     this.draggedWorker = null;
     this.hasJustDragged = false;
     this.init();
