@@ -97,7 +97,7 @@ class Store {
       localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(existingSchedules));
     }
     if (!localStorage.getItem(STORAGE_KEYS.ADMIN_PIN)) {
-      localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, '1234');
+      localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, 'Bd@9998');
     }
   }
 
@@ -264,7 +264,7 @@ class Store {
   }
 
   loginAdmin(pin) {
-    const savedPin = localStorage.getItem(STORAGE_KEYS.ADMIN_PIN) || '1234';
+    const savedPin = localStorage.getItem(STORAGE_KEYS.ADMIN_PIN) || 'Bd@9998';
     if (pin === savedPin) {
       sessionStorage.setItem(STORAGE_KEYS.ADMIN_SESSION, 'true');
       return true;
