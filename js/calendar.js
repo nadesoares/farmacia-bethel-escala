@@ -209,13 +209,10 @@ class CalendarManager {
   render() {
     const yearMonthKey = this.getYearMonthKey();
     const monthTitle = `${MONTH_NAMES[this.currentMonth - 1]} / ${this.currentYear}`;
-    const campaignName = MONTH_CAMPAIGNS[this.currentMonth] || '';
     
-    document.body.dataset.month = this.currentMonth;
-
     const displayEl = document.getElementById('current-month-display');
     if (displayEl) {
-      displayEl.innerHTML = `${monthTitle} <span class="month-campaign-tag" style="display:block; font-size:0.63rem; letter-spacing:0.04em; font-weight:800; margin-top:2px;">★ ${campaignName}</span>`;
+      displayEl.textContent = monthTitle;
     }
     
     const pickerEl = document.getElementById('month-picker');
