@@ -16,3 +16,9 @@ Thumbs.db
 
 # Vercel
 .vercel
+
+# Environment variables & Tokens
+.env
+.env.*
+.env.local
+
