@@ -786,8 +786,14 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 }
 
 .worker-chip.color-green {
-  color: #047857;
-  font-weight: 800;
+  color: #064e3b;
+  background: #ccff00;
+  border: 1px solid #84cc16;
+  border-radius: 4px;
+  padding: 0.08rem 0.4rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  box-shadow: 0 0 10px rgba(204, 255, 0, 0.75), 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .worker-chip.color-red {
