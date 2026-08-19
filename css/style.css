@@ -1236,17 +1236,19 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 }
 
 .pin-input {
-  width: 140px;
-  font-size: 1.5rem;
-  font-weight: 800;
+  width: 100%;
+  max-width: 280px;
+  font-size: 1.15rem;
+  font-weight: 700;
   text-align: center;
-  letter-spacing: 0.35em;
-  padding: 0.4rem;
+  letter-spacing: 0.18em;
+  padding: 0.55rem 0.85rem;
   border-radius: var(--radius-sm);
   border: 2px solid #cbd5e1;
   background: #ffffff;
   color: #0f172a;
   outline: none;
+  transition: var(--transition);
 }
 .pin-input:focus {
   border-color: #dc2626;
