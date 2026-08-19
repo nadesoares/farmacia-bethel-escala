@@ -7,20 +7,60 @@ const MONTH_NAMES = [
   'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'
 ];
 
-const MONTH_CAMPAIGNS = {
-  1: 'Janeiro Branco (Saúde Mental)',
-  2: 'Fevereiro Roxo (Lúpus & Fibromialgia)',
-  3: 'Março Azul (Prevenção & Saúde)',
-  4: 'Abril Azul (Autismo)',
-  5: 'Maio Amarelo (Atenção pela Vida)',
-  6: 'Junho Vermelho (Doação de Sangue)',
-  7: 'Julho Amarelo (Hepatites Virais)',
-  8: 'Agosto Dourado (Aleitamento & Vida)',
-  9: 'Setembro Amarelo (Valorização da Vida)',
-  10: 'Outubro Rosa (Câncer de Mama)',
-  11: 'Novembro Azul (Saúde do Homem)',
-  12: 'Dezembro Vermelho (Solidariedade)'
-};
+function getEasterDate(year) {
+  const a = year % 19;
+  const b = Math.floor(year / 100);
+  const c = year % 100;
+  const d = Math.floor(b / 4);
+  const e = b % 4;
+  const f = Math.floor((b + 8) / 25);
+  const g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4);
+  const k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const month = Math.floor((h + l - 7 * m + 114) / 31);
+  const day = ((h + l - 7 * m + 114) % 31) + 1;
+  return new Date(year, month - 1, day);
+}
+
+function getBrazilianHolidays(year) {
+  const holidays = {};
+  
+  // Feriados Nacionais Fixos (Leis 662/1949, 6.802/1980, 10.607/2002 e 14.759/2023)
+  const fixed = [
+    { day: 1, month: 1, name: 'Confraternização Universal (Ano Novo)' },
+    { day: 21, month: 4, name: 'Tiradentes' },
+    { day: 1, month: 5, name: 'Dia Mundial do Trabalho' },
+    { day: 7, month: 9, name: 'Independência do Brasil' },
+    { day: 12, month: 10, name: 'Nossa Senhora Aparecida' },
+    { day: 2, month: 11, name: 'Finados' },
+    { day: 15, month: 11, name: 'Proclamação da República' },
+    { day: 20, month: 11, name: 'Dia Nacional de Zumbi e da Consciência Negra' },
+    { day: 25, month: 12, name: 'Natal' }
+  ];
+  
+  fixed.forEach(f => {
+    const key = `${year}-${String(f.month).padStart(2, '0')}-${String(f.day).padStart(2, '0')}`;
+    holidays[key] = f.name;
+  });
+
+  // Feriados Móveis baseados na Páscoa
+  const easter = getEasterDate(year);
+  const addOffset = (offsetDays, name) => {
+    const d = new Date(easter.getTime() + offsetDays * 24 * 60 * 60 * 1000);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    holidays[key] = name;
+  };
+
+  addOffset(-47, 'Carnaval');
+  addOffset(-2, 'Sexta-feira Santa (Paixão de Cristo)');
+  addOffset(0, 'Páscoa');
+  addOffset(60, 'Corpus Christi');
+
+  return holidays;
+}
 
 class CalendarManager {
   constructor(store, scheduler) {
@@ -226,6 +266,7 @@ class CalendarManager {
     this.renderCalendarGrid(schedule);
     this.renderFilterOptions();
     this.renderMonthlyStats(schedule);
+    this.renderHolidaysFooter();
 
     const printableCal = document.getElementById('printable-calendar');
     if (printableCal) {
@@ -341,6 +382,8 @@ class CalendarManager {
     const today = new Date();
     const isCurrentActualMonth = (today.getFullYear() === this.currentYear && (today.getMonth() + 1) === this.currentMonth);
 
+    const holidaysMap = getBrazilianHolidays(this.currentYear);
+
     for (let day = 1; day <= totalDaysInMonth; day++) {
       const dateKey = `${this.currentYear}-${String(this.currentMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
       const rawDayData = (schedule.days && schedule.days[dateKey]) || { dayNumber: day, slots: [] };
@@ -348,14 +391,19 @@ class CalendarManager {
 
       const dateObj = new Date(this.currentYear, this.currentMonth - 1, day);
       const isWeekend = (dateObj.getDay() === 0 || dateObj.getDay() === 6);
+      const isHoliday = Boolean(holidaysMap[dateKey]);
+      const holidayName = holidaysMap[dateKey] || '';
       const isToday = isCurrentActualMonth && (today.getDate() === day);
 
       const isCopiedSource = Boolean(this.copiedDayData && this.copiedDayData.dateKey === dateKey);
       const hasCopied = Boolean(this.copiedDayData && this.copiedDayData.slots);
 
       const dayCell = document.createElement('div');
-      dayCell.className = `calendar-day-cell ${isWeekend ? 'is-weekend' : ''} ${isToday ? 'is-today' : ''} ${isCopiedSource ? 'is-copied-source' : ''} ${hasCopied ? 'has-copied-active' : ''}`;
+      dayCell.className = `calendar-day-cell ${isWeekend ? 'is-weekend' : ''} ${isHoliday ? 'is-holiday' : ''} ${isToday ? 'is-today' : ''} ${isCopiedSource ? 'is-copied-source' : ''} ${hasCopied ? 'has-copied-active' : ''}`;
       dayCell.dataset.dateKey = dateKey;
+      if (isHoliday) {
+        dayCell.title = `Feriado Nacional: ${holidayName}`;
+      }
 
       // Topbar com Badge do Dia e Ações Rápidas (Copiar / Colar)
       const topbarEl = document.createElement('div');
@@ -365,6 +413,14 @@ class CalendarManager {
       dayHeader.className = 'day-header-badge';
       dayHeader.textContent = day;
       topbarEl.appendChild(dayHeader);
+
+      if (isHoliday) {
+        const holIcon = document.createElement('span');
+        holIcon.className = 'holiday-icon-indicator';
+        holIcon.title = holidayName;
+        holIcon.innerHTML = '<i data-lucide="flag" style="width: 10px; height: 10px; color: #dc2626;"></i>';
+        topbarEl.appendChild(holIcon);
+      }
 
       if (this.store.isAdmin()) {
         const actionsEl = document.createElement('div');
@@ -859,6 +915,44 @@ class CalendarManager {
       `;
       statsContainer.appendChild(chip);
     });
+  }
+
+  renderHolidaysFooter() {
+    const container = document.getElementById('calendar-holidays-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const holidaysMap = getBrazilianHolidays(this.currentYear);
+    const monthHolidays = [];
+    const daysInMonth = new Date(this.currentYear, this.currentMonth, 0).getDate();
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateKey = `${this.currentYear}-${String(this.currentMonth).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      if (holidaysMap[dateKey]) {
+        monthHolidays.push({ day, dateKey, name: holidaysMap[dateKey] });
+      }
+    }
+
+    const label = document.createElement('div');
+    label.className = 'holiday-label';
+    label.innerHTML = '<i data-lucide="flag"></i><span>Feriados Nacionais:</span>';
+    container.appendChild(label);
+
+    if (monthHolidays.length === 0) {
+      const noneEl = document.createElement('span');
+      noneEl.className = 'no-holidays-text';
+      noneEl.textContent = 'Nenhum feriado nacional neste mês.';
+      container.appendChild(noneEl);
+    } else {
+      monthHolidays.forEach(h => {
+        const item = document.createElement('div');
+        item.className = 'holiday-pill-item';
+        item.innerHTML = `<strong>${String(h.day).padStart(2, '0')}/${String(this.currentMonth).padStart(2, '0')}</strong> - ${h.name}`;
+        container.appendChild(item);
+      });
+    }
+
+    if (window.lucide) window.lucide.createIcons();
   }
 
   openMonthTeamModal() {

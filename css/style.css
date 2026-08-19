@@ -1,22 +1,23 @@
 /* ==========================================================================
-   PHARMASHIFT / FARMÁCIA BETHEL - TEMA VERMELHO & BRANCO PREMIUM
+   PHARMASHIFT / FARMÁCIA BETHEL - LIGHT THEME (CINZA LEVE + VERMELHO BETHEL)
    ========================================================================== */
 
 :root {
-  /* Bethel Red & White Theme */
+  /* Light Theme Palette */
   --bg-app: #ffffff;
   --bg-topbar: rgba(255, 255, 255, 0.96);
   --bg-card: #ffffff;
   
-  /* Caixas dos Dias: Vermelho bem clarinho nos dias úteis, mais forte nos fins de semana */
-  --bg-cell: #fff5f5;
-  --bg-cell-hover: #fee2e2;
-  --bg-cell-weekend: #fee2e2;
+  /* Caixas dos Dias Úteis: Cinza suave (Imagem 2) */
+  --bg-cell: #f1f5f9;
+  --bg-cell-hover: #e2e8f0;
+  /* Caixas de Fim de Semana e Feriados: Vermelho suave (Imagem 4) */
+  --bg-cell-weekend: #fff5f5;
   --bg-cell-other: #fafafa;
-  --bg-subtle: #fef2f2;
+  --bg-subtle: #e2e8f0;
 
-  --border-app: #fee2e2;
-  --border-cell: #fecaca;
+  --border-app: #e2e8f0;
+  --border-cell: #e2e8f0;
   --border-focus: #dc2626;
 
   --text-main: #0f172a;
@@ -32,12 +33,11 @@
   /* Shift Highlights */
   --shift-normal-bg: #ffffff;
   --shift-normal-text: #0f172a;
-  --shift-normal-border: #fecaca;
+  --shift-normal-border: #e2e8f0;
 
-  --shift-green-bg: #ecfdf5;
-  --shift-green-text: #047857;
-  --shift-green-border: #a7f3d0;
-  --shift-green-glow: 0 0 10px rgba(5, 150, 105, 0.15);
+  --shift-green-bg: transparent;
+  --shift-green-text: #16a34a;
+  --shift-green-border: transparent;
 
   --shift-red-bg: #fee2e2;
   --shift-red-text: #b91c1c;
@@ -51,7 +51,7 @@
   --radius-lg: 14px;
   --radius-pill: 9999px;
 
-  --shadow-dark-card: 0 10px 30px -5px rgba(220, 38, 38, 0.06), 0 2px 4px 0 rgba(0, 0, 0, 0.04);
+  --shadow-dark-card: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 2px 4px 0 rgba(0, 0, 0, 0.03);
   --shadow-pop: 0 20px 30px -8px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.05);
 
   --transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
@@ -66,9 +66,6 @@
 body {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   background-color: var(--bg-app);
-  background-image: 
-    radial-gradient(at 10% 0%, rgba(220, 38, 38, 0.04) 0px, transparent 50%),
-    radial-gradient(at 90% 100%, rgba(220, 38, 38, 0.03) 0px, transparent 50%);
   color: var(--text-main);
   line-height: 1.35;
   min-height: 100vh;
@@ -88,7 +85,7 @@ h1, h2, h3, h4 {
 .flex-1 { flex: 1; }
 
 /* ==========================================================================
-   TOPBAR COM LOGO VERMELHA FARMÁCIA BETHEL
+   TOPBAR COM LOGO FARMÁCIA BETHEL (IMAGEM 3)
    ========================================================================== */
 .app-topbar {
   background: var(--bg-topbar);
@@ -98,11 +95,11 @@ h1, h2, h3, h4 {
   position: sticky;
   top: 0;
   z-index: 40;
-  box-shadow: 0 1px 4px rgba(220, 38, 38, 0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 
 .topbar-container {
-  max-width: 1180px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0.5rem 1rem;
   display: flex;
@@ -131,7 +128,7 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   justify-content: center;
-  filter: drop-shadow(0 2px 4px rgba(220, 38, 38, 0.3));
+  filter: drop-shadow(0 2px 5px rgba(220, 38, 38, 0.35));
 }
 
 .bethel-svg {
@@ -145,9 +142,9 @@ h1, h2, h3, h4 {
   line-height: 1.05;
 }
 
-/* NOME DA LOGO TOTALMENTE NA COR VERMELHA */
+/* LOGO TOTALMENTE VERMELHA (IMAGEM 3) */
 .bethel-sub {
-  font-size: 0.7rem;
+  font-size: 0.72rem;
   font-weight: 800;
   color: #dc2626;
   letter-spacing: 0.04em;
@@ -155,7 +152,7 @@ h1, h2, h3, h4 {
 }
 
 .bethel-title {
-  font-size: 1.25rem;
+  font-size: 1.28rem;
   font-weight: 900;
   color: #dc2626;
   letter-spacing: -0.02em;
@@ -164,8 +161,8 @@ h1, h2, h3, h4 {
 .date-navigator {
   display: flex;
   align-items: center;
-  background: #fff5f5;
-  border: 1px solid #fecaca;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
   border-radius: var(--radius-pill);
   padding: 0.15rem 0.35rem;
   gap: 0.25rem;
@@ -176,9 +173,9 @@ h1, h2, h3, h4 {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  border: 1px solid #fca5a5;
+  border: 1px solid #cbd5e1;
   background: #ffffff;
-  color: #dc2626;
+  color: #334155;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -206,7 +203,7 @@ h1, h2, h3, h4 {
 .month-label-wrapper h2 {
   font-size: 0.95rem;
   font-weight: 800;
-  color: #b91c1c;
+  color: #0f172a;
   white-space: nowrap;
   text-align: center;
   letter-spacing: 0.02em;
@@ -224,10 +221,10 @@ h1, h2, h3, h4 {
 
 .btn-today-pill {
   background: #ffffff;
-  border: 1px solid #fca5a5;
+  border: 1px solid #cbd5e1;
   font-size: 0.7rem;
   font-weight: 700;
-  color: #b91c1c;
+  color: #334155;
   padding: 0.2rem 0.6rem;
   border-radius: var(--radius-pill);
   cursor: pointer;
@@ -250,14 +247,14 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  background: #fff5f5;
-  border: 1px solid #fecaca;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
   border-radius: var(--radius-pill);
   padding: 0.2rem 0.75rem;
-  color: #b91c1c;
+  color: #334155;
   height: 38px;
 }
-.filter-box svg { width: 14px; height: 14px; color: #dc2626; }
+.filter-box svg { width: 14px; height: 14px; color: #475569; }
 
 .select-clean {
   border: none;
@@ -394,7 +391,7 @@ body.is-admin .btn-admin-pill {
   top: calc(100% + 6px);
   right: 0;
   background: #ffffff;
-  border: 1px solid #fecaca;
+  border: 1px solid var(--border-app);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-pop);
   padding: 0.4rem;
@@ -422,7 +419,7 @@ body.is-admin .btn-admin-pill {
   transition: var(--transition);
 }
 .dropdown-item:hover {
-  background: #fff5f5;
+  background: #f1f5f9;
   color: #dc2626;
 }
 .dropdown-item svg { width: 15px; height: 15px; color: #dc2626; }
@@ -447,7 +444,7 @@ body.is-admin .btn-admin-pill {
   border-radius: var(--radius-lg);
   padding: 0.75rem 1rem;
   box-shadow: var(--shadow-dark-card);
-  border: 1px solid #fee2e2;
+  border: 1px solid var(--border-app);
   flex: 1;
   width: 100%;
   box-sizing: border-box;
@@ -471,7 +468,7 @@ body.is-admin .btn-admin-pill {
 }
 
 /* ==========================================================================
-   CABEÇALHOS DOS DIAS: VERMELHO SUAVE (DIAS ÚTEIS) E VERMELHO FORTE (FIM DE SEMANA)
+   CABEÇALHOS DOS DIAS: CINZA MODERNO (DIAS ÚTEIS) E VERMELHO SUAVE (FIM DE SEMANA)
    ========================================================================== */
 .col-header {
   padding: 0.55rem 0.25rem;
@@ -484,18 +481,18 @@ body.is-admin .btn-admin-pill {
   min-width: 0;
 }
 
-/* Dias Úteis: Vermelho Suave / Rosé Elegante */
+/* Dias Úteis (Imagem 1) */
 .weekday-col {
-  background: #fff5f5;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
+  background: #e2e8f0;
+  color: #334155;
+  border: 1px solid #cbd5e1;
 }
 
-/* Fim de Semana: Vermelho Mais Forte */
+/* Fim de Semana (Imagem 1) */
 .weekend-col {
   background: #fee2e2;
   color: #991b1b;
-  border: 1px solid #f87171;
+  border: 1px solid #fca5a5;
 }
 
 .calendar-grid {
@@ -507,11 +504,11 @@ body.is-admin .btn-admin-pill {
 
 /* ==========================================================================
    CAIXINHAS DOS DIAS:
-   - DIAS ÚTEIS: VERMELHO BEM CLARINHO (#fff5f5)
-   - FINS DE SEMANA: VERMELHO MAIS FORTE (#fee2e2)
+   - DIAS ÚTEIS: CINZA LEVEMENTE (IMAGEM 2: #f1f5f9)
+   - FINS DE SEMANA E FERIADOS: VERMELHO CLARINHO (IMAGEM 4: #fff5f5)
    ========================================================================== */
 .calendar-day-cell {
-  background: var(--bg-cell); /* Vermelho bem clarinho */
+  background: var(--bg-cell); /* Cinza leve #f1f5f9 */
   border: 1px solid var(--border-cell);
   border-radius: var(--radius-sm);
   min-height: 90px;
@@ -528,21 +525,24 @@ body.is-admin .btn-admin-pill {
 }
 
 .calendar-day-cell:hover {
-  background: #fee2e2;
-  border-color: #ef4444;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.12);
+  background: #e2e8f0;
+  border-color: #94a3b8;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   transform: translateY(-1px);
 }
 
-/* Fim de semana em vermelho mais forte */
-.calendar-day-cell.is-weekend {
-  background: #fee2e2;
-  border: 1px solid #f87171;
+/* Fim de semana e Feriados em Vermelho Conforme Imagem 4 */
+.calendar-day-cell.is-weekend,
+.calendar-day-cell.is-holiday {
+  background: #fff5f5 !important;
+  border: 1px solid #fca5a5 !important;
 }
 
-.calendar-day-cell.is-weekend:hover {
-  background: #fecdd3;
-  border-color: #dc2626;
+.calendar-day-cell.is-weekend:hover,
+.calendar-day-cell.is-holiday:hover {
+  background: #fee2e2 !important;
+  border-color: #f87171 !important;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.12);
 }
 
 .calendar-day-cell.other-month {
@@ -553,8 +553,8 @@ body.is-admin .btn-admin-pill {
 }
 
 .calendar-day-cell.is-today {
-  border: 2px solid #059669;
-  background: #ecfdf5;
+  border: 2px solid #059669 !important;
+  background: #ecfdf5 !important;
   box-shadow: 0 0 10px rgba(5, 150, 105, 0.2);
 }
 
@@ -580,8 +580,8 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 
 .btn-day-action {
   background: #ffffff;
-  border: 1px solid #fca5a5;
-  color: #b91c1c;
+  border: 1px solid #cbd5e1;
+  color: #475569;
   border-radius: 4px;
   width: 20px;
   height: 20px;
@@ -636,9 +636,9 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 
 /* FLOATING COPY TOOLBAR */
 .copy-paste-floating-bar {
-  background: linear-gradient(135deg, #ffffff, #fff5f5);
-  border: 1.5px solid #f87171;
-  box-shadow: 0 8px 24px rgba(220, 38, 38, 0.12);
+  background: linear-gradient(135deg, #ffffff, #f8fafc);
+  border: 1.5px solid #38bdf8;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
   border-radius: 8px;
   padding: 0.45rem 0.85rem;
   display: flex;
@@ -702,15 +702,17 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   font-weight: 800;
   border-radius: 50%;
   background: #ffffff;
-  color: #b91c1c;
-  border: 1px solid #fca5a5;
-  box-shadow: 0 1px 2px rgba(220, 38, 38, 0.06);
+  color: #334155;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.calendar-day-cell.is-weekend .day-header-badge {
-  background: #dc2626;
-  color: #ffffff;
-  border-color: #b91c1c;
+/* Badge em Vermelho para Fim de Semana e Feriados (Imagem 4) */
+.calendar-day-cell.is-weekend .day-header-badge,
+.calendar-day-cell.is-holiday .day-header-badge {
+  background: #ffffff;
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
 }
 
 .calendar-day-cell.is-today .day-header-badge {
@@ -746,25 +748,26 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   min-height: 22px;
   cursor: pointer;
   background: #ffffff;
-  border: 1px solid #fecaca;
+  border: 1px solid #e2e8f0;
   color: #0f172a;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
 }
 
-.calendar-day-cell.is-weekend .slot-item {
+/* Slots nos Finais de Semana e Feriados com Borda Suave Vermelha (Imagem 4) */
+.calendar-day-cell.is-weekend .slot-item,
+.calendar-day-cell.is-holiday .slot-item {
   border-color: #fca5a5;
 }
 
 .slot-turn-multi {
   background: #ffffff;
-  border: 1px solid #fecaca;
 }
 
 .slot-item:not(.empty-slot):hover {
   transform: translateY(-1px) scale(1.02);
   background: #ffffff !important;
-  border-color: #dc2626 !important;
-  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2) !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
   z-index: 5;
 }
 
@@ -785,6 +788,7 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   transform: scale(1.04);
 }
 
+/* FOLGA EM VERDE NEON SEM CONTORNO */
 .worker-chip.color-green {
   color: #16a34a;
   font-weight: 900;
@@ -832,28 +836,27 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 
 .slot-item.empty-slot {
   background: transparent;
-  border: 1px dashed #fca5a5;
-  color: #fca5a5;
+  border: 1px dashed #cbd5e1;
+  color: #94a3b8;
   letter-spacing: 0.15em;
   font-weight: 800;
   cursor: pointer;
 }
 
-.slot-item.empty-slot:hover {
-  background: #ffffff;
-  border-color: #dc2626;
-  border-radius: var(--radius-xs);
+.calendar-day-cell.is-weekend .slot-item.empty-slot,
+.calendar-day-cell.is-holiday .slot-item.empty-slot {
+  border-color: #fca5a5;
+  color: #fca5a5;
 }
 
-/* EFEITOS VISUAIS DE ARRASTAR E SOLTAR (DRAG & DROP) */
-.chip-dragging {
-  opacity: 0.35 !important;
-  transform: scale(0.95) !important;
+.slot-item.empty-slot:hover {
+  background: #ffffff;
+  border-color: #475569;
+  border-radius: var(--radius-xs);
 }
 
 .empty-dash {
   display: inline-block;
-  color: #fca5a5;
   user-select: none;
 }
 
@@ -871,11 +874,60 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 }
 
 /* ==========================================================================
+   RODAPÉ DO CALENDÁRIO COM FERIADOS NACIONAIS (LADO ESQUERDO)
+   ========================================================================== */
+.calendar-footer-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 0.65rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--border-app);
+}
+
+.calendar-holidays-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+  color: #475569;
+}
+
+.holiday-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-weight: 800;
+  color: #b91c1c;
+}
+.holiday-label svg { width: 14px; height: 14px; }
+
+.holiday-pill-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: #fff5f5;
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--radius-pill);
+  font-weight: 700;
+  box-shadow: 0 1px 2px rgba(220, 38, 38, 0.05);
+}
+
+.no-holidays-text {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* ==========================================================================
    MODAL EDIT SLOTS (LIGHT THEME)
    ========================================================================== */
 .shift-edit-section {
-  background: #fff5f5;
-  border: 1px solid #fecaca;
+  background: #f1f5f9;
+  border: 1px solid var(--border-app);
   border-radius: var(--radius-sm);
   padding: 0.85rem;
   display: flex;
@@ -895,13 +947,13 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   padding: 0.2rem 0.55rem;
   border-radius: var(--radius-pill);
 }
-.slot-indicator.slot-1 { background: #fee2e2; color: #b91c1c; }
+.slot-indicator.slot-1 { background: #e0e7ff; color: #4338ca; }
 .slot-indicator.slot-2 { background: #fef3c7; color: #b45309; }
 .slot-indicator.slot-3 { background: #f3e8ff; color: #6b21a8; }
 
 .btn-add-person-shift {
   background: #ffffff;
-  border: 1px solid #fca5a5;
+  border: 1px solid #cbd5e1;
   color: #dc2626;
   font-size: 0.74rem;
   font-weight: 700;
@@ -938,7 +990,7 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   font-weight: 700 !important;
   background-color: #ffffff !important;
   color: #0f172a !important;
-  border: 1px solid #fca5a5 !important;
+  border: 1px solid #cbd5e1 !important;
   border-radius: var(--radius-xs) !important;
   padding: 0.4rem 0.75rem !important;
   outline: none !important;
@@ -952,7 +1004,7 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   font-weight: 600 !important;
   background-color: #ffffff !important;
   color: #0f172a !important;
-  border: 1px solid #fca5a5 !important;
+  border: 1px solid #cbd5e1 !important;
   border-radius: var(--radius-xs) !important;
   padding: 0.4rem 0.6rem !important;
   outline: none !important;
@@ -985,7 +1037,7 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   align-items: center;
   gap: 0.75rem;
   background: var(--bg-card);
-  border: 1px solid #fee2e2;
+  border: 1px solid var(--border-app);
   border-radius: var(--radius-pill);
   padding: 0.35rem 1rem;
   box-shadow: var(--shadow-dark-card);
@@ -1013,8 +1065,8 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  background: #fff5f5;
-  border: 1px solid #fecaca;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
   padding: 0.18rem 0.65rem;
   border-radius: var(--radius-pill);
   font-weight: 600;
@@ -1058,7 +1110,7 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   width: 100%;
   max-width: 560px;
   box-shadow: var(--shadow-pop);
-  border: 1px solid #fee2e2;
+  border: 1px solid var(--border-app);
   overflow: hidden;
 }
 
@@ -1067,7 +1119,7 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   align-items: center;
   justify-content: space-between;
   padding: 0.85rem 1.25rem;
-  border-bottom: 1px solid #fee2e2;
+  border-bottom: 1px solid var(--border-app);
 }
 
 .modal-title-group {
@@ -1119,8 +1171,8 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   justify-content: flex-end;
   gap: 0.5rem;
   padding: 0.75rem 1.25rem;
-  background: #fff5f5;
-  border-top: 1px solid #fee2e2;
+  background: #f8fafc;
+  border-top: 1px solid var(--border-app);
 }
 
 .modal-instruction {
@@ -1144,7 +1196,7 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   letter-spacing: 0.35em;
   padding: 0.4rem;
   border-radius: var(--radius-sm);
-  border: 2px solid #fca5a5;
+  border: 2px solid #cbd5e1;
   background: #ffffff;
   color: #0f172a;
   outline: none;
@@ -1222,8 +1274,8 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 }
 
 .employee-row-card {
-  background: #fff5f5;
-  border: 1px solid #fecaca;
+  background: #f8fafc;
+  border: 1px solid var(--border-app);
   border-radius: var(--radius-sm);
   padding: 0.55rem 0.85rem;
   display: flex;
