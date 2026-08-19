@@ -405,22 +405,27 @@ class CalendarManager {
         dayCell.title = `Feriado Nacional: ${holidayName}`;
       }
 
-      // Topbar com Badge do Dia e Ações Rápidas (Copiar / Colar)
+      // Topbar com Badge do Dia, Tag de Feriado e Ações Rápidas (Copiar / Colar)
       const topbarEl = document.createElement('div');
       topbarEl.className = 'day-cell-topbar';
+
+      const dayHeaderGroup = document.createElement('div');
+      dayHeaderGroup.className = 'day-header-group';
 
       const dayHeader = document.createElement('div');
       dayHeader.className = 'day-header-badge';
       dayHeader.textContent = day;
-      topbarEl.appendChild(dayHeader);
+      dayHeaderGroup.appendChild(dayHeader);
 
       if (isHoliday) {
-        const holIcon = document.createElement('span');
-        holIcon.className = 'holiday-icon-indicator';
-        holIcon.title = holidayName;
-        holIcon.innerHTML = '<i data-lucide="flag" style="width: 10px; height: 10px; color: #dc2626;"></i>';
-        topbarEl.appendChild(holIcon);
+        const holBadge = document.createElement('span');
+        holBadge.className = 'holiday-badge-tag';
+        holBadge.textContent = 'Feriado';
+        holBadge.title = holidayName;
+        dayHeaderGroup.appendChild(holBadge);
       }
+
+      topbarEl.appendChild(dayHeaderGroup);
 
       if (this.store.isAdmin()) {
         const actionsEl = document.createElement('div');

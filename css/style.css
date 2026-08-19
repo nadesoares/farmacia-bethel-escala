@@ -8,16 +8,16 @@
   --bg-topbar: rgba(255, 255, 255, 0.96);
   --bg-card: #ffffff;
   
-  /* Caixas dos Dias Úteis: Cinza suave (Imagem 2) */
-  --bg-cell: #f1f5f9;
-  --bg-cell-hover: #e2e8f0;
-  /* Caixas de Fim de Semana e Feriados: Vermelho suave (Imagem 4) */
-  --bg-cell-weekend: #fff5f5;
+  /* Caixas dos Dias Úteis: Cinza 50% mais suave */
+  --bg-cell: #f8fafc;
+  --bg-cell-hover: #f1f5f9;
+  /* Caixas de Fim de Semana e Feriados: Vermelho 50% mais suave */
+  --bg-cell-weekend: #fffafa;
   --bg-cell-other: #fafafa;
-  --bg-subtle: #e2e8f0;
+  --bg-subtle: #f1f5f9;
 
   --border-app: #e2e8f0;
-  --border-cell: #e2e8f0;
+  --border-cell: #edf2f7;
   --border-focus: #dc2626;
 
   --text-main: #0f172a;
@@ -481,18 +481,18 @@ body.is-admin .btn-admin-pill {
   min-width: 0;
 }
 
-/* Dias Úteis (Imagem 1) */
+/* Dias Úteis (50% mais suave) */
 .weekday-col {
-  background: #e2e8f0;
-  color: #334155;
-  border: 1px solid #cbd5e1;
+  background: #f1f5f9;
+  color: #475569;
+  border: 1px solid #e2e8f0;
 }
 
-/* Fim de Semana (Imagem 1) */
+/* Fim de Semana (50% mais suave) */
 .weekend-col {
-  background: #fee2e2;
-  color: #991b1b;
-  border: 1px solid #fca5a5;
+  background: #fff5f5;
+  color: #b91c1c;
+  border: 1px solid #fecaca;
 }
 
 .calendar-grid {
@@ -508,7 +508,7 @@ body.is-admin .btn-admin-pill {
    - FINS DE SEMANA E FERIADOS: VERMELHO CLARINHO (IMAGEM 4: #fff5f5)
    ========================================================================== */
 .calendar-day-cell {
-  background: var(--bg-cell); /* Cinza leve #f1f5f9 */
+  background: var(--bg-cell); /* Cinza super leve #f8fafc */
   border: 1px solid var(--border-cell);
   border-radius: var(--radius-sm);
   min-height: 90px;
@@ -525,24 +525,24 @@ body.is-admin .btn-admin-pill {
 }
 
 .calendar-day-cell:hover {
-  background: #e2e8f0;
-  border-color: #94a3b8;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
   transform: translateY(-1px);
 }
 
-/* Fim de semana e Feriados em Vermelho Conforme Imagem 4 */
+/* Fim de semana e Feriados em Vermelho 50% mais suave */
 .calendar-day-cell.is-weekend,
 .calendar-day-cell.is-holiday {
-  background: #fff5f5 !important;
-  border: 1px solid #fca5a5 !important;
+  background: #fffafa !important;
+  border: 1px solid #fed7d7 !important;
 }
 
 .calendar-day-cell.is-weekend:hover,
 .calendar-day-cell.is-holiday:hover {
-  background: #fee2e2 !important;
-  border-color: #f87171 !important;
-  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.12);
+  background: #fff5f5 !important;
+  border-color: #fca5a5 !important;
+  box-shadow: 0 3px 10px rgba(220, 38, 38, 0.08);
 }
 
 .calendar-day-cell.other-month {
@@ -692,6 +692,12 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 }
 
 /* BADGES DOS DIAS */
+.day-header-group {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
 .day-header-badge {
   display: inline-flex;
   align-items: center;
@@ -707,7 +713,22 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-/* Badge em Vermelho para Fim de Semana e Feriados (Imagem 4) */
+.holiday-badge-tag {
+  font-size: 0.62rem;
+  font-weight: 800;
+  color: #b91c1c;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  padding: 0.05rem 0.38rem;
+  border-radius: var(--radius-pill);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: 1.1;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Badge em Vermelho para Fim de Semana e Feriados */
 .calendar-day-cell.is-weekend .day-header-badge,
 .calendar-day-cell.is-holiday .day-header-badge {
   background: #ffffff;
@@ -788,10 +809,13 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   transform: scale(1.04);
 }
 
-/* FOLGA EM VERDE NEON SEM CONTORNO */
+/* FOLGA EM VERDE NEON COM TRAÇO NO MEIO (LINE-THROUGH) */
 .worker-chip.color-green {
   color: #16a34a;
   font-weight: 900;
+  text-decoration: line-through;
+  text-decoration-color: #16a34a;
+  text-decoration-thickness: 2px;
 }
 
 .worker-chip.color-red {
