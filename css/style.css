@@ -1,36 +1,38 @@
 /* ==========================================================================
-   PHARMASHIFT / FARMÁCIA BETHEL - LIGHT PREMIUM MODE COM PALETA CLEAN
+   PHARMASHIFT / FARMÁCIA BETHEL - LIGHT PREMIUM COM CORES TEMÁTICAS MENSAIS
    ========================================================================== */
 
 :root {
   /* Light Premium Palette */
-  --bg-app: #f8fafc;
-  --bg-topbar: rgba(255, 255, 255, 0.94);
+  --bg-app: #f1f5f9;
+  --bg-topbar: rgba(255, 255, 255, 0.96);
   --bg-card: #ffffff;
-  --bg-cell: #ffffff;
-  --bg-cell-hover: #f1f5f9;
-  --bg-cell-weekend: #f8fafc;
-  --bg-cell-other: #f1f5f9;
-  --bg-subtle: #e2e8f0;
+  
+  /* Caixas dos Dias com Tom Mais Escuro e Definido */
+  --bg-cell: #e2e8f0;
+  --bg-cell-hover: #cbd5e1;
+  --bg-cell-weekend: #fef2f2;
+  --bg-cell-other: #f8fafc;
+  --bg-subtle: #cbd5e1;
 
-  --border-app: #e2e8f0;
-  --border-cell: #e2e8f0;
-  --border-focus: #059669;
+  --border-app: #cbd5e1;
+  --border-cell: #cbd5e1;
+  --border-focus: #0284c7;
 
   --text-main: #0f172a;
-  --text-muted: #64748b;
-  --text-dark: #334155;
+  --text-muted: #475569;
+  --text-dark: #1e293b;
 
   /* Vibrant Accents */
-  --primary: #059669;
-  --primary-hover: #047857;
-  --primary-glow: rgba(5, 150, 105, 0.2);
-  --primary-gradient: linear-gradient(135deg, #059669 0%, #047857 100%);
+  --primary: #0284c7;
+  --primary-hover: #0369a1;
+  --primary-glow: rgba(2, 132, 199, 0.25);
+  --primary-gradient: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
 
-  /* Shift Highlights (Light Mode High Contrast) */
+  /* Shift Highlights */
   --shift-normal-bg: #ffffff;
   --shift-normal-text: #0f172a;
-  --shift-normal-border: #cbd5e1;
+  --shift-normal-border: #94a3b8;
 
   --shift-green-bg: #ecfdf5;
   --shift-green-text: #047857;
@@ -49,8 +51,8 @@
   --radius-lg: 14px;
   --radius-pill: 9999px;
 
-  --shadow-dark-card: 0 10px 30px -5px rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgba(0, 0, 0, 0.04);
-  --shadow-pop: 0 20px 30px -8px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.05);
+  --shadow-dark-card: 0 10px 30px -5px rgba(0, 0, 0, 0.08), 0 2px 4px 0 rgba(0, 0, 0, 0.04);
+  --shadow-pop: 0 20px 30px -8px rgba(0, 0, 0, 0.14), 0 4px 10px rgba(0, 0, 0, 0.06);
 
   --transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -65,8 +67,8 @@ body {
   font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   background-color: var(--bg-app);
   background-image: 
-    radial-gradient(at 15% 0%, rgba(220, 38, 38, 0.03) 0px, transparent 45%),
-    radial-gradient(at 85% 100%, rgba(16, 185, 129, 0.04) 0px, transparent 45%);
+    radial-gradient(at 10% 0%, rgba(2, 132, 199, 0.05) 0px, transparent 50%),
+    radial-gradient(at 90% 100%, rgba(220, 38, 38, 0.04) 0px, transparent 50%);
   color: var(--text-main);
   line-height: 1.35;
   min-height: 100vh;
@@ -96,7 +98,7 @@ h1, h2, h3, h4 {
   position: sticky;
   top: 0;
   z-index: 40;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
 .topbar-container {
@@ -160,12 +162,13 @@ h1, h2, h3, h4 {
 .date-navigator {
   display: flex;
   align-items: center;
-  background: #f1f5f9;
+  background: #ffffff;
   border: 1px solid var(--border-app);
   border-radius: var(--radius-pill);
-  padding: 0.12rem 0.25rem;
-  gap: 0.2rem;
-  height: 36px;
+  padding: 0.15rem 0.35rem;
+  gap: 0.25rem;
+  height: 38px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
 }
 
 .nav-arrow-btn {
@@ -173,14 +176,13 @@ h1, h2, h3, h4 {
   height: 28px;
   border-radius: 50%;
   border: 1px solid #cbd5e1;
-  background: #ffffff;
+  background: #f8fafc;
   color: #0f172a;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: var(--transition);
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 .nav-arrow-btn svg { width: 15px; height: 15px; }
 .nav-arrow-btn:hover {
@@ -192,20 +194,32 @@ h1, h2, h3, h4 {
 
 .month-label-wrapper {
   position: relative;
-  width: 160px;
+  min-width: 150px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  padding: 0 0.5rem;
 }
 
 .month-label-wrapper h2 {
-  font-size: 0.95rem;
-  font-weight: 700;
+  font-size: 0.92rem;
+  font-weight: 800;
   color: #0f172a;
   white-space: nowrap;
   text-align: center;
   letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+
+.month-campaign-tag {
+  font-size: 0.64rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
 }
 
 .hidden-picker {
@@ -219,7 +233,7 @@ h1, h2, h3, h4 {
 }
 
 .btn-today-pill {
-  background: #ffffff;
+  background: #f1f5f9;
   border: 1px solid #cbd5e1;
   font-size: 0.7rem;
   font-weight: 700;
@@ -246,12 +260,13 @@ h1, h2, h3, h4 {
   display: flex;
   align-items: center;
   gap: 0.35rem;
-  background: #f1f5f9;
+  background: #ffffff;
   border: 1px solid var(--border-app);
   border-radius: var(--radius-pill);
   padding: 0.2rem 0.75rem;
   color: var(--text-muted);
-  height: 36px;
+  height: 38px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 .filter-box svg { width: 14px; height: 14px; }
 
@@ -259,7 +274,7 @@ h1, h2, h3, h4 {
   border: none;
   background: transparent;
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #0f172a;
   outline: none;
   cursor: pointer;
@@ -299,12 +314,12 @@ h1, h2, h3, h4 {
   cursor: pointer;
   transition: var(--transition);
   white-space: nowrap;
-  height: 36px;
+  height: 38px;
 }
 .btn svg { width: 14px; height: 14px; }
 
 .btn-emerald {
-  background: var(--primary-gradient);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
   color: #ffffff;
   box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
 }
@@ -314,32 +329,34 @@ h1, h2, h3, h4 {
 }
 
 .btn-secondary-pill {
-  background: #f1f5f9;
+  background: #ffffff;
   color: #0f172a;
   border: 1px solid #cbd5e1;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 .btn-secondary-pill:hover {
-  background: #e2e8f0;
+  background: #f1f5f9;
   border-color: #94a3b8;
 }
 
 .btn-export {
-  background: #f1f5f9;
+  background: #ffffff;
   color: #0f172a;
   border: 1px solid #cbd5e1;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 .btn-export:hover {
-  background: #e2e8f0;
+  background: #f1f5f9;
   border-color: #94a3b8;
 }
 
 .btn-icon-danger {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: #fef2f2;
+  background: #fee2e2;
   color: #dc2626;
-  border: 1px solid #fecaca;
+  border: 1px solid #fca5a5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -348,16 +365,16 @@ h1, h2, h3, h4 {
 }
 .btn-icon-danger svg { width: 14px; height: 14px; }
 .btn-icon-danger:hover {
-  background: #fee2e2;
+  background: #fecaca;
   transform: scale(1.05);
 }
 
 .btn-admin-pill {
-  background: #f1f5f9;
+  background: #ffffff;
   border: 1px solid #cbd5e1;
   color: var(--text-dark);
   font-size: 0.78rem;
-  font-weight: 600;
+  font-weight: 700;
   padding: 0.35rem 0.85rem;
   border-radius: var(--radius-pill);
   display: inline-flex;
@@ -365,11 +382,12 @@ h1, h2, h3, h4 {
   gap: 0.4rem;
   cursor: pointer;
   transition: var(--transition);
-  height: 36px;
+  height: 38px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 .btn-admin-pill svg { width: 14px; height: 14px; }
 .btn-admin-pill:hover {
-  background: #e2e8f0;
+  background: #f1f5f9;
   color: #0f172a;
 }
 
@@ -421,7 +439,7 @@ body.is-admin .btn-admin-pill {
 .dropdown-item svg { width: 15px; height: 15px; color: var(--primary); }
 
 /* ==========================================================================
-   CALENDAR AREA (LIGHT THEME)
+   CALENDAR AREA
    ========================================================================== */
 .app-main {
   max-width: 1320px;
@@ -464,29 +482,117 @@ body.is-admin .btn-admin-pill {
 }
 
 /* ==========================================================================
-   CABEÇALHOS DOS DIAS DA SEMANA (CINZA MODERNO & DESTAQUE DE FIM DE SEMANA)
+   CABEÇALHOS DOS DIAS: CORES TEMÁTICAS MENSAIS (CAMPANHAS DE SAÚDE) & AZUL
    ========================================================================== */
 .col-header {
-  padding: 0.5rem 0.25rem;
+  padding: 0.55rem 0.25rem;
   text-align: center;
   font-weight: 800;
-  font-size: 0.82rem;
+  font-size: 0.84rem;
   border-radius: var(--radius-sm);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   min-width: 0;
+  transition: var(--transition);
 }
 
+/* Padrão Dias Úteis: Azul Real Elegante */
 .weekday-col {
-  background: #e2e8f0;
-  color: #334155;
-  border: 1px solid #cbd5e1;
+  background: #dbeafe;
+  color: #1d4ed8;
+  border: 1px solid #93c5fd;
 }
 
+/* Fins de Semana: Destaque Vermelho/Coral Suave */
 .weekend-col {
   background: #fee2e2;
   color: #991b1b;
   border: 1px solid #fca5a5;
+}
+
+/* --- TEMAS MENSAIS DINÂMICOS POR CAMPANHA --- */
+/* Mês 1: Janeiro Branco (Saúde Mental - Azul Claro / Gelo) */
+body[data-month="1"] .weekday-col {
+  background: #e0f2fe;
+  color: #0369a1;
+  border-color: #7dd3fc;
+}
+
+/* Mês 2: Fevereiro Roxo (Lúpus, Fibromialgia, Alzheimer) */
+body[data-month="2"] .weekday-col {
+  background: #f3e8ff;
+  color: #7e22ce;
+  border-color: #d8b4fe;
+}
+
+/* Mês 3: Março Azul Marinho (Câncer Colorretal) */
+body[data-month="3"] .weekday-col {
+  background: #dbeafe;
+  color: #1e40af;
+  border-color: #93c5fd;
+}
+
+/* Mês 4: Abril Azul (Conscientização do Autismo) */
+body[data-month="4"] .weekday-col {
+  background: #e0f2fe;
+  color: #0284c7;
+  border-color: #38bdf8;
+}
+
+/* Mês 5: Maio Amarelo (Atenção pela Vida no Trânsito) */
+body[data-month="5"] .weekday-col {
+  background: #fef3c7;
+  color: #b45309;
+  border-color: #fcd34d;
+}
+
+/* Mês 6: Junho Vermelho (Doação de Sangue) */
+body[data-month="6"] .weekday-col {
+  background: #ffe4e6;
+  color: #be123c;
+  border-color: #fda4af;
+}
+
+/* Mês 7: Julho Amarelo / Verde (Hepatites Virais e Prevenção) */
+body[data-month="7"] .weekday-col {
+  background: #d1fae5;
+  color: #047857;
+  border-color: #6ee7b7;
+}
+
+/* Mês 8: Agosto Dourado / Azul Farmácia (Aleitamento e Saúde) */
+body[data-month="8"] .weekday-col {
+  background: #dbeafe;
+  color: #1e40af;
+  border-color: #93c5fd;
+}
+
+/* Mês 9: Setembro Amarelo (Valorização da Vida e Prevenção ao Suicídio) */
+body[data-month="9"] .weekday-col {
+  background: #fef08a;
+  color: #854d0e;
+  border-color: #facc15;
+}
+
+/* Mês 10: Outubro Rosa (Conscientização e Prevenção do Câncer de Mama) */
+body[data-month="10"] .weekday-col {
+  background: #fce7f3;
+  color: #be185d;
+  border-color: #f472b6;
+}
+
+/* Mês 11: Novembro Azul (Saúde do Homem e Prevenção Câncer de Próstata) */
+body[data-month="11"] .weekday-col {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-color: #60a5fa;
+}
+
+/* Mês 12: Dezembro Vermelho (Conscientização e Solidariedade) */
+body[data-month="12"] .weekday-col {
+  background: #fee2e2;
+  color: #b91c1c;
+  border-color: #fca5a5;
 }
 
 .calendar-grid {
@@ -496,46 +602,51 @@ body.is-admin .btn-admin-pill {
   width: 100%;
 }
 
-/* CÉLULAS DO CALENDÁRIO */
+/* ==========================================================================
+   CAIXINHA DE CADA DIA (DESTAQUE MAIS ESCURO, ELEGANTE E DEFINIDO)
+   ========================================================================== */
 .calendar-day-cell {
   background: var(--bg-cell);
-  border: 1px solid var(--border-cell);
+  border: 1.5px solid var(--border-cell);
   border-radius: var(--radius-sm);
-  min-height: 88px;
+  min-height: 90px;
   display: flex;
   flex-direction: column;
-  padding: 0.25rem 0.35rem;
-  gap: 0.2rem;
+  padding: 0.3rem 0.4rem;
+  gap: 0.25rem;
   transition: var(--transition);
   position: relative;
   cursor: pointer;
   min-width: 0;
   overflow: hidden;
   box-sizing: border-box;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
 .calendar-day-cell:hover {
-  background: #f1f5f9;
-  border-color: #059669;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  background: var(--bg-cell-hover);
+  border-color: #0284c7;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
 }
 
 .calendar-day-cell.is-weekend {
-  background: #f8fafc;
+  background: var(--bg-cell-weekend);
   border-color: #fca5a5;
 }
 
 .calendar-day-cell.other-month {
-  background: #f1f5f9;
-  opacity: 0.45;
-  border-color: transparent;
+  background: var(--bg-cell-other);
+  opacity: 0.4;
+  border-color: #e2e8f0;
   cursor: default;
+  box-shadow: none;
 }
 
 .calendar-day-cell.is-today {
-  border-color: var(--primary);
-  background: #ecfdf5;
-  box-shadow: 0 0 12px rgba(5, 150, 105, 0.18);
+  border: 2px solid #0284c7;
+  background: #f0f9ff;
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.25);
 }
 
 .day-cell-topbar {
@@ -560,8 +671,8 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 
 .btn-day-action {
   background: #ffffff;
-  border: 1px solid #cbd5e1;
-  color: #64748b;
+  border: 1px solid #94a3b8;
+  color: #475569;
   border-radius: 4px;
   width: 20px;
   height: 20px;
@@ -571,7 +682,7 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   justify-content: center;
   cursor: pointer;
   transition: all 0.15s ease;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
 }
 
 .btn-day-action i, .btn-day-action svg {
@@ -603,8 +714,8 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 
 .calendar-day-cell.is-copied-source {
   border-color: #0284c7 !important;
-  box-shadow: 0 0 12px rgba(2, 132, 199, 0.3) !important;
-  background: #f0f9ff !important;
+  box-shadow: 0 0 12px rgba(2, 132, 199, 0.35) !important;
+  background: #e0f2fe !important;
 }
 
 .calendar-day-cell.is-copied-source .day-header-badge {
@@ -616,8 +727,8 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 /* FLOATING COPY TOOLBAR */
 .copy-paste-floating-bar {
   background: linear-gradient(135deg, #ffffff, #f8fafc);
-  border: 1px solid #38bdf8;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1), 0 0 12px rgba(56, 189, 248, 0.15);
+  border: 1.5px solid #38bdf8;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 0 12px rgba(56, 189, 248, 0.15);
   border-radius: 8px;
   padding: 0.45rem 0.85rem;
   display: flex;
@@ -674,14 +785,15 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  font-size: 0.72rem;
+  width: 22px;
+  height: 22px;
+  font-size: 0.74rem;
   font-weight: 800;
   border-radius: 50%;
-  background: #e2e8f0;
-  color: #1e293b;
-  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #0f172a;
+  border: 1.5px solid #94a3b8;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
 }
 
 .calendar-day-cell.is-weekend .day-header-badge {
@@ -691,9 +803,9 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 }
 
 .calendar-day-cell.is-today .day-header-badge {
-  background: var(--primary);
+  background: #0284c7;
   color: #ffffff;
-  border-color: var(--primary);
+  border-color: #0284c7;
 }
 
 .day-slots-container {
@@ -701,10 +813,10 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
-  gap: 0.18rem;
+  gap: 0.2rem;
 }
 
-/* SLOT ROW */
+/* SLOT ROW (Cartão Branco de Alto Contraste dentro da Caixa Escura) */
 .slot-item {
   font-size: 0.78rem;
   font-weight: 700;
@@ -723,20 +835,21 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   min-height: 22px;
   cursor: pointer;
   background: #ffffff;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #94a3b8;
   color: #0f172a;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
 
 .slot-turn-multi {
   background: #ffffff;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #94a3b8;
 }
 
 .slot-item:not(.empty-slot):hover {
   transform: translateY(-1px) scale(1.02);
-  background: #f1f5f9 !important;
-  border-color: var(--primary) !important;
-  box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25) !important;
+  background: #f8fafc !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 2px 8px rgba(2, 132, 199, 0.25) !important;
   z-index: 5;
 }
 
@@ -796,24 +909,24 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 }
 
 .slot-slash {
-  color: #94a3b8;
+  color: #64748b;
   font-size: 0.72rem;
   font-weight: 800;
   user-select: none;
 }
 
 .slot-item.empty-slot {
-  background: transparent;
-  border: 1px dashed #cbd5e1;
-  color: #cbd5e1;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px dashed #94a3b8;
+  color: #94a3b8;
   letter-spacing: 0.15em;
   font-weight: 800;
   cursor: pointer;
 }
 
 .slot-item.empty-slot:hover {
-  background: #f1f5f9;
-  border-color: #94a3b8;
+  background: #ffffff;
+  border-color: #475569;
   border-radius: var(--radius-xs);
 }
 
@@ -825,7 +938,7 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 
 .empty-dash {
   display: inline-block;
-  color: #cbd5e1;
+  color: #94a3b8;
   user-select: none;
 }
 
@@ -846,7 +959,7 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
    MODAL EDIT SLOTS (LIGHT MODE)
    ========================================================================== */
 .shift-edit-section {
-  background: #f8fafc;
+  background: #f1f5f9;
   border: 1px solid var(--border-app);
   border-radius: var(--radius-sm);
   padding: 0.85rem;
@@ -883,7 +996,7 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   transition: var(--transition);
 }
 .btn-add-person-shift:hover {
-  background: #ecfdf5;
+  background: #e0f2fe;
   border-color: var(--primary);
 }
 
@@ -1000,13 +1113,13 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 }
 
 .stat-chip-badge {
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
+  background: #dbeafe;
+  border: 1px solid #93c5fd;
   border-radius: var(--radius-pill);
   padding: 0.06rem 0.4rem;
   font-size: 0.72rem;
   font-weight: 800;
-  color: #047857;
+  color: #1d4ed8;
 }
 
 /* Modals */
@@ -1052,7 +1165,7 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   width: 30px;
   height: 30px;
   border-radius: var(--radius-xs);
-  background: #ecfdf5;
+  background: #e0f2fe;
   color: var(--primary);
   display: flex;
   align-items: center;

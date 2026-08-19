@@ -7,6 +7,21 @@ const MONTH_NAMES = [
   'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'
 ];
 
+const MONTH_CAMPAIGNS = {
+  1: 'Janeiro Branco (Saúde Mental)',
+  2: 'Fevereiro Roxo (Lúpus & Fibromialgia)',
+  3: 'Março Azul (Prevenção & Saúde)',
+  4: 'Abril Azul (Autismo)',
+  5: 'Maio Amarelo (Atenção pela Vida)',
+  6: 'Junho Vermelho (Doação de Sangue)',
+  7: 'Julho Amarelo (Hepatites Virais)',
+  8: 'Agosto Dourado (Aleitamento & Vida)',
+  9: 'Setembro Amarelo (Valorização da Vida)',
+  10: 'Outubro Rosa (Câncer de Mama)',
+  11: 'Novembro Azul (Saúde do Homem)',
+  12: 'Dezembro Vermelho (Solidariedade)'
+};
+
 class CalendarManager {
   constructor(store, scheduler) {
     this.store = store;
@@ -194,9 +209,14 @@ class CalendarManager {
   render() {
     const yearMonthKey = this.getYearMonthKey();
     const monthTitle = `${MONTH_NAMES[this.currentMonth - 1]} / ${this.currentYear}`;
+    const campaignName = MONTH_CAMPAIGNS[this.currentMonth] || '';
     
+    document.body.dataset.month = this.currentMonth;
+
     const displayEl = document.getElementById('current-month-display');
-    if (displayEl) displayEl.textContent = monthTitle;
+    if (displayEl) {
+      displayEl.innerHTML = `${monthTitle} <span class="month-campaign-tag" style="display:block; font-size:0.63rem; letter-spacing:0.04em; font-weight:800; margin-top:2px;">★ ${campaignName}</span>`;
+    }
     
     const pickerEl = document.getElementById('month-picker');
     if (pickerEl) pickerEl.value = yearMonthKey;
