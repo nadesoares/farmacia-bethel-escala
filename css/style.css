@@ -576,9 +576,9 @@ body.is-admin .btn-admin-pill {
 }
 
 .calendar-day-cell.is-today {
-  border: 2px solid #059669 !important;
-  background: #ecfdf5 !important;
-  box-shadow: 0 0 10px rgba(5, 150, 105, 0.2);
+  border: 1.5px solid #10b981 !important;
+  background: #f0fdf4 !important;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.15);
 }
 
 .day-cell-topbar {
@@ -1404,26 +1404,26 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
    TAG "HOJE" E SISTEMA DE AÇÕES/CAMPANHAS DA FARMÁCIA
    ========================================================================== */
 
-/* Badge "HOJE" no Dia Atual */
+/* Badge "HOJE" no Dia Atual (Harmonizado com o Verde do Dia Atual) */
 .today-badge-tag {
   font-size: 0.62rem;
   font-weight: 900;
   color: #ffffff;
-  background: #0284c7;
-  border: 1px solid #0369a1;
+  background: #059669;
+  border: 1px solid #047857;
   padding: 0.05rem 0.38rem;
   border-radius: var(--radius-pill);
   letter-spacing: 0.05em;
   line-height: 1.1;
   display: inline-flex;
   align-items: center;
-  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.3);
+  box-shadow: 0 1px 4px rgba(5, 150, 105, 0.25);
 }
 
 .calendar-day-cell.is-today .day-header-badge {
-  background: #0284c7;
+  background: #059669;
   color: #ffffff;
-  border-color: #0369a1;
+  border-color: #047857;
 }
 
 /* Badge de Ação/Campanha na Célula */
