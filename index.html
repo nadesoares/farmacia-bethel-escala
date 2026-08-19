@@ -145,15 +145,15 @@
 
         <!-- Modern Calendar Grid -->
         <div class="calendar-table">
-          <!-- Day of Week Headers -->
-          <div class="calendar-header-row">
+          <!-- Day of Week Headers (Dinâmico: Dom-Sáb no público, Seg-Dom no admin) -->
+          <div id="calendar-header-row" class="calendar-header-row">
+            <div class="col-header weekend-col">DOMINGO</div>
             <div class="col-header weekday-col">SEGUNDA</div>
             <div class="col-header weekday-col">TERÇA</div>
             <div class="col-header weekday-col">QUARTA</div>
             <div class="col-header weekday-col">QUINTA</div>
             <div class="col-header weekday-col">SEXTA</div>
             <div class="col-header weekend-col">SÁBADO</div>
-            <div class="col-header weekend-col">DOMINGO</div>
           </div>
 
           <!-- Dynamic Calendar Days Grid -->
@@ -1684,11 +1684,44 @@ class CalendarManager {
     if (!gridEl) return;
     gridEl.innerHTML = '';
 
+    const isAdmin = this.store.isAdmin();
+
+    // Dinâmico: Admin vê Seg-Dom (fins de semana juntos). Público vê Dom-Sáb (padrão tradicional)
+    const headerRowEl = document.getElementById('calendar-header-row');
+    if (headerRowEl) {
+      if (isAdmin) {
+        headerRowEl.innerHTML = `
+          <div class="col-header weekday-col">SEGUNDA</div>
+          <div class="col-header weekday-col">TERÇA</div>
+          <div class="col-header weekday-col">QUARTA</div>
+          <div class="col-header weekday-col">QUINTA</div>
+          <div class="col-header weekday-col">SEXTA</div>
+          <div class="col-header weekend-col">SÁBADO</div>
+          <div class="col-header weekend-col">DOMINGO</div>
+        `;
+      } else {
+        headerRowEl.innerHTML = `
+          <div class="col-header weekend-col">DOMINGO</div>
+          <div class="col-header weekday-col">SEGUNDA</div>
+          <div class="col-header weekday-col">TERÇA</div>
+          <div class="col-header weekday-col">QUARTA</div>
+          <div class="col-header weekday-col">QUINTA</div>
+          <div class="col-header weekday-col">SEXTA</div>
+          <div class="col-header weekend-col">SÁBADO</div>
+        `;
+      }
+    }
+
     const firstDayDate = new Date(this.currentYear, this.currentMonth - 1, 1);
     const totalDaysInMonth = new Date(this.currentYear, this.currentMonth, 0).getDate();
 
-    let firstDayIndex = firstDayDate.getDay() - 1;
-    if (firstDayIndex === -1) firstDayIndex = 6;
+    let firstDayIndex;
+    if (isAdmin) {
+      firstDayIndex = firstDayDate.getDay() - 1;
+      if (firstDayIndex === -1) firstDayIndex = 6;
+    } else {
+      firstDayIndex = firstDayDate.getDay();
+    }
 
     for (let i = 0; i < firstDayIndex; i++) {
       const emptyCell = document.createElement('div');
