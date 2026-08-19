@@ -86,6 +86,7 @@ class CalendarManager {
     document.getElementById('btn-prev-month')?.addEventListener('click', () => this.changeMonth(-1));
     document.getElementById('btn-next-month')?.addEventListener('click', () => this.changeMonth(1));
     document.getElementById('btn-today')?.addEventListener('click', () => this.goToToday());
+    this.bindCampaignEvents();
 
     const monthPicker = document.getElementById('month-picker');
     monthPicker?.addEventListener('change', (e) => {
@@ -268,6 +269,7 @@ class CalendarManager {
     this.renderFilterOptions();
     this.renderMonthlyStats(schedule);
     this.renderHolidaysFooter();
+    this.renderCampaignsFooter();
 
     const printableCal = document.getElementById('printable-calendar');
     if (printableCal) {
@@ -406,7 +408,7 @@ class CalendarManager {
         dayCell.title = `Feriado Nacional: ${holidayName}`;
       }
 
-      // Topbar com Badge do Dia, Tag de Feriado e Ações Rápidas (Copiar / Colar)
+      // Topbar com Badge do Dia, Tag HOJE, Tag de Feriado, Ações e Ações Rápidas (Copiar / Colar)
       const topbarEl = document.createElement('div');
       topbarEl.className = 'day-cell-topbar';
 
@@ -418,6 +420,14 @@ class CalendarManager {
       dayHeader.textContent = day;
       dayHeaderGroup.appendChild(dayHeader);
 
+      if (isToday) {
+        const todayBadge = document.createElement('span');
+        todayBadge.className = 'today-badge-tag';
+        todayBadge.textContent = 'HOJE';
+        todayBadge.title = 'Hoje';
+        dayHeaderGroup.appendChild(todayBadge);
+      }
+
       if (isHoliday) {
         const holBadge = document.createElement('span');
         holBadge.className = 'holiday-badge-tag';
@@ -425,6 +435,17 @@ class CalendarManager {
         holBadge.title = holidayName;
         dayHeaderGroup.appendChild(holBadge);
       }
+
+      const allCampaigns = this.store.getCampaigns();
+      const activeCampaigns = this.getCampaignStatusForDate(dateKey, allCampaigns);
+      activeCampaigns.forEach(({ campaign, isActive, isRadarAlert }) => {
+        const campBadge = document.createElement('span');
+        campBadge.className = `action-badge-tag ${isRadarAlert ? 'pulse-radar-alert' : ''}`;
+        campBadge.style.backgroundColor = campaign.color || '#eab308';
+        campBadge.title = `Ação: ${campaign.title}`;
+        campBadge.innerHTML = `<i data-lucide="target" style="width: 10px; height: 10px;"></i> <span>${campaign.title}</span>`;
+        dayHeaderGroup.appendChild(campBadge);
+      });
 
       topbarEl.appendChild(dayHeaderGroup);
 
@@ -957,6 +978,278 @@ class CalendarManager {
         container.appendChild(item);
       });
     }
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  // --- GERENCIAMENTO E LÓGICA DE AÇÕES E CAMPANHAS ---
+  getCampaignStatusForDate(dateKey, campaigns) {
+    if (!campaigns || !Array.isArray(campaigns)) return [];
+    const targetDate = new Date(dateKey + 'T00:00:00');
+    const matches = [];
+
+    campaigns.forEach(camp => {
+      if (!camp.startDate) return;
+      const startDate = new Date(camp.startDate + 'T00:00:00');
+      const endDate = camp.endDate ? new Date(camp.endDate + 'T00:00:00') : new Date(startDate);
+
+      let isActive = false;
+      let isRadarAlert = false;
+
+      const diffMs = startDate.getTime() - targetDate.getTime();
+      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+      const isUpcoming3Days = (diffDays > 0 && diffDays <= 3);
+
+      if (camp.recurrenceType === 'CUSTOM_RANGE') {
+        if (targetDate >= startDate && targetDate <= endDate) {
+          isActive = true;
+          isRadarAlert = true;
+        } else if (isUpcoming3Days) {
+          isRadarAlert = true;
+        }
+      } else if (camp.recurrenceType === 'WEEKLY') {
+        if (targetDate >= startDate && targetDate.getDay() === startDate.getDay()) {
+          isActive = true;
+          isRadarAlert = true;
+        } else if (isUpcoming3Days) {
+          isRadarAlert = true;
+        }
+      } else if (camp.recurrenceType === 'WEEKDAYS_SPECIFIC') {
+        const dow = targetDate.getDay();
+        if (targetDate >= startDate && dow >= 1 && dow <= 5) {
+          isActive = true;
+          isRadarAlert = true;
+        } else if (isUpcoming3Days) {
+          isRadarAlert = true;
+        }
+      } else if (camp.recurrenceType === 'WEEKEND') {
+        const dow = targetDate.getDay();
+        if (targetDate >= startDate && (dow === 0 || dow === 6)) {
+          isActive = true;
+          isRadarAlert = true;
+        } else if (isUpcoming3Days) {
+          isRadarAlert = true;
+        }
+      } else if (camp.recurrenceType === 'MONTHLY_DAY') {
+        if (targetDate >= startDate && targetDate.getDate() === startDate.getDate()) {
+          isActive = true;
+          isRadarAlert = true;
+        } else if (isUpcoming3Days) {
+          isRadarAlert = true;
+        }
+      } else if (camp.recurrenceType === 'MONTHLY_WEEKDAY') {
+        if (targetDate >= startDate && targetDate.getDay() === startDate.getDay() && targetDate.getDate() <= 7) {
+          isActive = true;
+          isRadarAlert = true;
+        } else if (isUpcoming3Days) {
+          isRadarAlert = true;
+        }
+      } else if (camp.recurrenceType === 'ANNUAL') {
+        if (targetDate.getMonth() === startDate.getMonth() && targetDate.getDate() === startDate.getDate()) {
+          isActive = true;
+          isRadarAlert = true;
+        } else if (isUpcoming3Days) {
+          isRadarAlert = true;
+        }
+      }
+
+      if (isActive || isRadarAlert) {
+        matches.push({ campaign: camp, isActive, isRadarAlert });
+      }
+    });
+
+    return matches;
+  }
+
+  renderCampaignsFooter() {
+    const container = document.getElementById('calendar-campaigns-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const campaigns = this.store.getCampaigns();
+    if (!campaigns || campaigns.length === 0) return;
+
+    const label = document.createElement('div');
+    label.className = 'holiday-label';
+    label.style.color = '#eab308';
+    label.innerHTML = '<i data-lucide="target"></i><span>Ações da Farmácia:</span>';
+    container.appendChild(label);
+
+    const monthPrefix = `${this.currentYear}-${String(this.currentMonth).padStart(2, '0')}`;
+    const daysInMonth = new Date(this.currentYear, this.currentMonth, 0).getDate();
+    const activeInMonthMap = new Map();
+
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateKey = `${monthPrefix}-${String(day).padStart(2, '0')}`;
+      const matches = this.getCampaignStatusForDate(dateKey, campaigns);
+      matches.forEach(m => activeInMonthMap.set(m.campaign.id, m));
+    }
+
+    if (activeInMonthMap.size === 0) {
+      const noneEl = document.createElement('span');
+      noneEl.className = 'no-holidays-text';
+      noneEl.textContent = 'Nenhuma ação agendada neste mês.';
+      container.appendChild(noneEl);
+    } else {
+      activeInMonthMap.forEach(({ campaign, isRadarAlert }) => {
+        const item = document.createElement('div');
+        item.className = `campaign-footer-chip ${isRadarAlert ? 'pulse-radar-alert' : ''}`;
+        item.style.backgroundColor = campaign.color || '#eab308';
+        item.innerHTML = `<i data-lucide="target" style="width: 12px; height: 12px;"></i> <strong>${campaign.title}</strong>`;
+        container.appendChild(item);
+      });
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  bindCampaignEvents() {
+    const btnCampaigns = document.getElementById('btn-manage-campaigns');
+    if (btnCampaigns) {
+      btnCampaigns.addEventListener('click', () => {
+        document.getElementById('more-actions-dropdown')?.classList.add('hidden');
+        this.openCampaignsModal();
+      });
+    }
+
+    const formCampaign = document.getElementById('form-campaign');
+    if (formCampaign) {
+      formCampaign.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const id = document.getElementById('campaign-id')?.value;
+        const title = document.getElementById('campaign-name')?.value.trim();
+        const recurrenceType = document.getElementById('campaign-recurrence')?.value;
+        const startDate = document.getElementById('campaign-start-date')?.value;
+        const endDate = document.getElementById('campaign-end-date')?.value;
+        const color = document.getElementById('campaign-color-val')?.value || '#eab308';
+
+        if (!title || !startDate) {
+          window.app?.showToast('Preencha o nome e a data de início da ação.', 'warning');
+          return;
+        }
+
+        const campaign = {
+          id: id || undefined,
+          title,
+          recurrenceType,
+          startDate,
+          endDate: endDate || startDate,
+          color
+        };
+
+        this.store.saveCampaign(campaign);
+        this.resetCampaignForm();
+        this.renderCampaignsList();
+        this.render();
+        window.app?.showToast(`🎯 Ação "${title}" salva com sucesso!`, 'success');
+      });
+    }
+
+    const colorContainer = document.getElementById('color-presets-container');
+    if (colorContainer) {
+      colorContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('.color-preset-btn');
+        if (!btn) return;
+        colorContainer.querySelectorAll('.color-preset-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const colorVal = btn.dataset.color;
+        const inputVal = document.getElementById('campaign-color-val');
+        if (inputVal) inputVal.value = colorVal;
+      });
+    }
+
+    const btnCancel = document.getElementById('btn-cancel-campaign-edit');
+    if (btnCancel) {
+      btnCancel.addEventListener('click', () => this.resetCampaignForm());
+    }
+  }
+
+  resetCampaignForm() {
+    const form = document.getElementById('form-campaign');
+    if (form) form.reset();
+    document.getElementById('campaign-id').value = '';
+    const titleEl = document.getElementById('form-campaign-title');
+    if (titleEl) titleEl.textContent = '🎯 Nova Ação / Campanha';
+    document.getElementById('btn-cancel-campaign-edit')?.classList.add('hidden');
+    const colorContainer = document.getElementById('color-presets-container');
+    if (colorContainer) {
+      colorContainer.querySelectorAll('.color-preset-btn').forEach(b => b.classList.remove('active'));
+      colorContainer.querySelector('[data-color="#eab308"]')?.classList.add('active');
+    }
+    const colorVal = document.getElementById('campaign-color-val');
+    if (colorVal) colorVal.value = '#eab308';
+  }
+
+  openCampaignsModal() {
+    this.resetCampaignForm();
+    this.renderCampaignsList();
+    window.app?.openModal('modal-campaigns');
+  }
+
+  renderCampaignsList() {
+    const container = document.getElementById('campaigns-list-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const campaigns = this.store.getCampaigns();
+    if (!campaigns || campaigns.length === 0) {
+      container.innerHTML = '<span class="text-xs text-muted">Nenhuma ação cadastrada ainda.</span>';
+      return;
+    }
+
+    campaigns.forEach(c => {
+      const row = document.createElement('div');
+      row.className = 'campaign-item-row';
+      row.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="width: 14px; height: 14px; border-radius: 50%; background-color: ${c.color || '#eab308'}; display: inline-block;"></span>
+          <div>
+            <h5 style="margin: 0; font-size: 0.85rem; font-weight: 700; color: #0f172a;">${c.title}</h5>
+            <span style="font-size: 0.72rem; color: #64748b;">Início: ${c.startDate} ${c.endDate && c.endDate !== c.startDate ? `até ${c.endDate}` : ''}</span>
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.3rem;">
+          <button type="button" class="btn-icon-sm btn-edit-camp" title="Editar" style="border: none; background: transparent; cursor: pointer; color: #0284c7;">
+            <i data-lucide="edit-2" style="width: 14px; height: 14px;"></i>
+          </button>
+          <button type="button" class="btn-icon-sm btn-del-camp" title="Excluir" style="border: none; background: transparent; cursor: pointer; color: #dc2626;">
+            <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+          </button>
+        </div>
+      `;
+
+      row.querySelector('.btn-edit-camp')?.addEventListener('click', () => {
+        document.getElementById('campaign-id').value = c.id;
+        document.getElementById('campaign-name').value = c.title;
+        document.getElementById('campaign-recurrence').value = c.recurrenceType || 'CUSTOM_RANGE';
+        document.getElementById('campaign-start-date').value = c.startDate || '';
+        document.getElementById('campaign-end-date').value = c.endDate || '';
+        document.getElementById('campaign-color-val').value = c.color || '#eab308';
+        
+        const titleEl = document.getElementById('form-campaign-title');
+        if (titleEl) titleEl.textContent = '✏️ Editar Ação / Campanha';
+        document.getElementById('btn-cancel-campaign-edit')?.classList.remove('hidden');
+
+        const colorContainer = document.getElementById('color-presets-container');
+        if (colorContainer) {
+          colorContainer.querySelectorAll('.color-preset-btn').forEach(b => {
+            if (b.dataset.color === c.color) b.classList.add('active');
+            else b.classList.remove('active');
+          });
+        }
+      });
+
+      row.querySelector('.btn-del-camp')?.addEventListener('click', () => {
+        if (confirm(`Deseja excluir a ação "${c.title}"?`)) {
+          this.store.deleteCampaign(c.id);
+          this.renderCampaignsList();
+          this.render();
+          window.app?.showToast('Ação excluída.', 'info');
+        }
+      });
+
+      container.appendChild(row);
+    });
 
     if (window.lucide) window.lucide.createIcons();
   }

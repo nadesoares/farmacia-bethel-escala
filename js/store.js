@@ -7,6 +7,7 @@ const STORAGE_KEYS = {
   SCHEDULES: 'farmacia_escala_schedules_v17',
   ADMIN_PIN: 'farmacia_escala_admin_pin_v1',
   ADMIN_SESSION: 'farmacia_escala_admin_session_v1',
+  CAMPAIGNS: 'farmacia_escala_campaigns_v1',
 };
 
 const DEFAULT_EMPLOYEES = [
@@ -283,6 +284,58 @@ class Store {
       return true;
     }
     return false;
+  }
+
+  // --- GERENCIAMENTO DE AÇÕES / CAMPANHAS DA FARMÁCIA ---
+  getCampaigns() {
+    const raw = localStorage.getItem(STORAGE_KEYS.CAMPAIGNS);
+    if (!raw) {
+      const defaultCampaigns = [
+        {
+          id: 'camp-setembro-amarelo',
+          title: 'Ação Setembro Amarelo',
+          recurrenceType: 'CUSTOM_RANGE',
+          startDate: '2026-09-04',
+          endDate: '2026-09-08',
+          daysOfWeek: [5],
+          dayOfMonth: 4,
+          monthOfYear: 9,
+          color: '#eab308',
+          createdAt: new Date().toISOString()
+        }
+      ];
+      localStorage.setItem(STORAGE_KEYS.CAMPAIGNS, JSON.stringify(defaultCampaigns));
+      return defaultCampaigns;
+    }
+    try {
+      return JSON.parse(raw);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  saveCampaign(campaign) {
+    const campaigns = this.getCampaigns();
+    if (!campaign.id) {
+      campaign.id = 'camp-' + Date.now();
+      campaign.createdAt = new Date().toISOString();
+      campaigns.push(campaign);
+    } else {
+      const index = campaigns.findIndex(c => c.id === campaign.id);
+      if (index !== -1) {
+        campaigns[index] = { ...campaigns[index], ...campaign };
+      } else {
+        campaigns.push(campaign);
+      }
+    }
+    localStorage.setItem(STORAGE_KEYS.CAMPAIGNS, JSON.stringify(campaigns));
+    return campaign;
+  }
+
+  deleteCampaign(id) {
+    let campaigns = this.getCampaigns();
+    campaigns = campaigns.filter(c => c.id !== id);
+    localStorage.setItem(STORAGE_KEYS.CAMPAIGNS, JSON.stringify(campaigns));
   }
 }
 

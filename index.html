@@ -101,6 +101,12 @@
               <span>Configurações</span>
             </button>
 
+            <!-- 🎯 Ações na Farmácia -->
+            <button id="btn-manage-campaigns" class="dropdown-item">
+              <i data-lucide="target"></i>
+              <span>Ações na Farmácia</span>
+            </button>
+
             <!-- ⬇ Baixar / Imprimir (Seção com Sub-itens) -->
             <div class="dropdown-section">
               <div class="dropdown-section-title">
@@ -189,9 +195,12 @@
           </div>
         </div>
 
-        <!-- Rodapé do Calendário: Feriados Nacionais (Lado Esquerdo) -->
+        <!-- Rodapé do Calendário: Feriados Nacionais e Ações da Farmácia -->
         <div class="calendar-footer-row">
           <div id="calendar-holidays-container" class="calendar-holidays-container">
+            <!-- Renderizado dinamicamente -->
+          </div>
+          <div id="calendar-campaigns-container" class="calendar-campaigns-container">
             <!-- Renderizado dinamicamente -->
           </div>
         </div>
@@ -314,6 +323,97 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-ghost" data-modal="modal-team-manager">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: GESTÃO DE AÇÕES E CAMPANHAS NA FARMÁCIA (ADMIN) -->
+  <div id="modal-campaigns" class="modal-overlay hidden">
+    <div class="modal-box modern-modal" style="max-width: 650px;">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-icon-badge" style="background: rgba(234, 179, 8, 0.15); color: #eab308;">
+            <i data-lucide="target"></i>
+          </div>
+          <div>
+            <h3>Ações e Campanhas na Farmácia</h3>
+            <span class="text-xs text-muted">Cadastre eventos temáticos, ações de saúde e promoções</span>
+          </div>
+        </div>
+        <button class="btn-close-modal" data-modal="modal-campaigns"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body">
+        
+        <!-- Form de Nova Ação -->
+        <form id="form-campaign" class="campaign-form-card">
+          <input type="hidden" id="campaign-id">
+          <h4 id="form-campaign-title" style="font-size: 0.9rem; margin-bottom: 0.5rem; color: #0f172a;">🎯 Nova Ação / Campanha</h4>
+          
+          <div class="form-group">
+            <label for="campaign-name">Nome da Ação / Campanha *</label>
+            <input type="text" id="campaign-name" class="form-input-modern" placeholder="Ex: Ação Setembro Amarelo, Blitz da Saúde..." required>
+          </div>
+
+          <div class="form-row" style="margin-top: 0.4rem;">
+            <div class="form-group flex-1">
+              <label for="campaign-recurrence">Tipo de Recorrência / Duração *</label>
+              <select id="campaign-recurrence" class="select-input-modern">
+                <option value="CUSTOM_RANGE">Período Personalizado (Início & Fim / N dias)</option>
+                <option value="WEEKLY">1x por Semana (Dia específico da semana)</option>
+                <option value="WEEKDAYS_SPECIFIC">Dias Específicos da Semana (Seg, Ter, Qua...)</option>
+                <option value="WEEKEND">Todos os Fins de Semana</option>
+                <option value="MONTHLY_DAY">1x por Mês (Dia Fixo do Mês, ex: dia 15)</option>
+                <option value="MONTHLY_WEEKDAY">1x por Mês (Dia da Semana, ex: 1ª Terça)</option>
+                <option value="ANNUAL">Anual (Mesma data todos os anos)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Campos de datas / parâmetros de acordo com o tipo escolhido -->
+          <div id="campaign-dates-container" class="form-row" style="margin-top: 0.4rem;">
+            <div class="form-group flex-1">
+              <label for="campaign-start-date">Data de Início *</label>
+              <input type="date" id="campaign-start-date" class="form-input-modern" required>
+            </div>
+            <div class="form-group flex-1" id="group-campaign-end-date">
+              <label for="campaign-end-date">Data de Fim (ou Duração)</label>
+              <input type="date" id="campaign-end-date" class="form-input-modern">
+            </div>
+          </div>
+
+          <!-- Escolha de Cor com Botões Seletores Interativos -->
+          <div class="form-group" style="margin-top: 0.5rem;">
+            <label>Cor de Destaque da Ação *</label>
+            <div class="color-presets-row" id="color-presets-container">
+              <button type="button" class="color-preset-btn active" data-color="#eab308" style="background: #eab308; color: #ffffff;" title="Amarelo (Setembro Amarelo)">🟡 Amarelo</button>
+              <button type="button" class="color-preset-btn" data-color="#ec4899" style="background: #ec4899; color: #ffffff;" title="Rosa (Outubro Rosa)">🩷 Rosa</button>
+              <button type="button" class="color-preset-btn" data-color="#0284c7" style="background: #0284c7; color: #ffffff;" title="Azul (Novembro Azul)">🔵 Azul</button>
+              <button type="button" class="color-preset-btn" data-color="#10b981" style="background: #10b981; color: #ffffff;" title="Verde Saúde">🟢 Verde</button>
+              <button type="button" class="color-preset-btn" data-color="#ef4444" style="background: #ef4444; color: #ffffff;" title="Vermelho Alerta">🔴 Vermelho</button>
+              <button type="button" class="color-preset-btn" data-color="#a855f7" style="background: #a855f7; color: #ffffff;" title="Roxo Especial">🟣 Roxo</button>
+              <button type="button" class="color-preset-btn" data-color="#f97316" style="background: #f97316; color: #ffffff;" title="Laranja Energia">🟠 Laranja</button>
+            </div>
+            <input type="hidden" id="campaign-color-val" value="#eab308">
+          </div>
+
+          <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.6rem;">
+            <button type="button" id="btn-cancel-campaign-edit" class="btn btn-ghost btn-sm hidden">Cancelar Edição</button>
+            <button type="submit" class="btn btn-emerald btn-sm">
+              <i data-lucide="check"></i> Salvar Ação
+            </button>
+          </div>
+        </form>
+
+        <hr style="border: none; border-top: 1px solid var(--border-app); margin: 0.85rem 0;">
+
+        <h4 style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">📋 Ações Cadastradas</h4>
+        <div id="campaigns-list-container" class="campaigns-list-box">
+          <!-- Rendered dynamically -->
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-ghost" data-modal="modal-campaigns">Fechar</button>
       </div>
     </div>
   </div>
