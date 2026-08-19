@@ -35,6 +35,7 @@ class App {
     if (btnTeam) {
       btnTeam.addEventListener('click', (e) => {
         e.preventDefault();
+        document.getElementById('more-actions-dropdown')?.classList.add('hidden');
         window.employeeManager?.render();
         this.openModal('modal-team-manager');
       });

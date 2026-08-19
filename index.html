@@ -19,12 +19,12 @@
 </head>
 <body>
 
-  <!-- SINGLE UNIFIED TOP BAR COM LOGO FARMÁCIA BETHEL -->
+  <!-- SINGLE UNIFIED TOP BAR COM LOGO FARMÁCIA BETHEL (REORGANIZADA EM 5 BLOCOS) -->
   <header class="app-topbar no-print">
     <div class="topbar-container">
       
-      <!-- 1. Brand Farmácia Bethel + Navegação de Mês -->
-      <div class="topbar-left">
+      <!-- LOGO FARMÁCIA BETHEL -->
+      <div class="topbar-brand">
         <div class="brand-bethel">
           <div class="bethel-logo-icon">
             <svg viewBox="0 0 100 100" class="bethel-svg">
@@ -37,81 +37,108 @@
             <span class="bethel-title">Bethel</span>
           </div>
         </div>
-
-        <div class="date-navigator">
-          <button id="btn-prev-month" class="nav-arrow-btn" title="Mês Anterior">
-            <i data-lucide="chevron-left"></i>
-          </button>
-          <div class="month-label-wrapper">
-            <h2 id="current-month-display">MAIO / 2026</h2>
-            <input type="month" id="month-picker" class="hidden-picker" value="2026-05">
-          </div>
-          <button id="btn-next-month" class="nav-arrow-btn" title="Próximo Mês">
-            <i data-lucide="chevron-right"></i>
-          </button>
-          <button id="btn-today" class="btn-today-pill">Hoje</button>
-        </div>
       </div>
 
-      <!-- 2. Filter & Admin Controls -->
-      <div class="topbar-center">
-        <div class="filter-box">
-          <i data-lucide="user"></i>
-          <select id="filter-employee" class="select-clean">
-            <option value="ALL">Visualizar Todos</option>
-          </select>
+      <!-- FLUXO DOS 5 BLOCOS DA BARRA DE AÇÕES -->
+      <div class="topbar-content-flow">
+        
+        <!-- 1. NAVEGAÇÃO DO CALENDÁRIO -->
+        <div class="topbar-block block-nav">
+          <div class="date-navigator">
+            <button id="btn-prev-month" class="nav-arrow-btn" title="Mês Anterior">
+              <i data-lucide="chevron-left"></i>
+            </button>
+            <div class="month-label-wrapper">
+              <h2 id="current-month-display">MAIO / 2026</h2>
+              <input type="month" id="month-picker" class="hidden-picker" value="2026-05">
+            </div>
+            <button id="btn-next-month" class="nav-arrow-btn" title="Próximo Mês">
+              <i data-lucide="chevron-right"></i>
+            </button>
+          </div>
+          <button id="btn-today" class="btn-today-pill" title="Mês Atual">
+            <i data-lucide="calendar" class="icon-sm"></i>
+            <span>Hoje</span>
+          </button>
         </div>
 
-        <!-- Admin Only Actions (Exibidos apenas com Admin Ativo) -->
-        <div id="admin-actions-group" class="admin-only-group admin-only hidden">
-          <button id="btn-month-team" class="btn btn-secondary-pill" title="Selecionar quais funcionários trabalham neste mês">
+        <!-- 2. BLOCO DE FILTROS -->
+        <div class="topbar-block block-filters">
+          <div class="filter-box">
+            <i data-lucide="users"></i>
+            <select id="filter-employee" class="select-clean">
+              <option value="ALL">Visualizar Todos</option>
+            </select>
+          </div>
+
+          <button id="btn-month-team" class="btn btn-secondary-pill admin-only hidden" title="Selecionar equipe ativa neste mês">
             <i data-lucide="user-check"></i>
-            <span>Equipe do Mês</span>
+            <span>Equipe ativa</span>
+            <i data-lucide="chevron-down" class="icon-sm"></i>
           </button>
+        </div>
+
+        <!-- 3. AÇÃO PRINCIPAL -->
+        <div class="topbar-block block-main-action admin-only hidden">
           <button id="btn-auto-generate" class="btn btn-emerald" title="Gerar escala automática para a equipe deste mês">
             <i data-lucide="sparkles"></i>
             <span>Gerar Escala</span>
           </button>
-          <button id="btn-manage-team" class="btn btn-secondary-pill" title="Cadastro Geral de Funcionários (Configurações)">
-            <i data-lucide="settings"></i>
-            <span>Config</span>
-          </button>
-          <button id="btn-clear-month" class="btn-icon-danger" title="Limpar escala do mês">
-            <i data-lucide="trash-2"></i>
-          </button>
         </div>
-      </div>
 
-      <!-- 3. Export & Admin Access -->
-      <div class="topbar-right">
-        <!-- Export Menu (Apenas Admin) -->
-        <div class="export-wrapper admin-only hidden">
-          <button id="btn-export-menu" class="btn btn-export">
-            <i data-lucide="download"></i>
-            <span>Baixar / Imprimir</span>
+        <!-- 4. AÇÕES SECUNDÁRIAS (MENU MAIS AÇÕES) -->
+        <div class="topbar-block block-secondary-actions export-wrapper admin-only hidden">
+          <button id="btn-more-actions" class="btn btn-secondary-pill" title="Outras Ações">
+            <i data-lucide="more-vertical"></i>
+            <span>Mais ações</span>
             <i data-lucide="chevron-down" class="icon-sm"></i>
           </button>
-          <div id="export-dropdown" class="dropdown-menu hidden">
-            <button id="btn-export-img" class="dropdown-item">
-              <i data-lucide="image"></i>
-              <span>Baixar Imagem (PNG)</span>
+          
+          <div id="more-actions-dropdown" class="dropdown-menu more-actions-dropdown hidden">
+            <!-- ⚙ Configurações -->
+            <button id="btn-manage-team" class="dropdown-item">
+              <i data-lucide="settings"></i>
+              <span>Configurações</span>
             </button>
-            <button id="btn-export-pdf" class="dropdown-item">
-              <i data-lucide="file-text"></i>
-              <span>Baixar PDF</span>
-            </button>
-            <button id="btn-print" class="dropdown-item">
-              <i data-lucide="printer"></i>
-              <span>Imprimir (A4)</span>
+
+            <!-- ⬇ Baixar / Imprimir (Seção com Sub-itens) -->
+            <div class="dropdown-section">
+              <div class="dropdown-section-title">
+                <i data-lucide="download"></i>
+                <span>Baixar / Imprimir</span>
+              </div>
+              <button id="btn-export-img" class="dropdown-item sub-item">
+                <i data-lucide="image"></i>
+                <span>Baixar Imagem (PNG)</span>
+              </button>
+              <button id="btn-export-pdf" class="dropdown-item sub-item">
+                <i data-lucide="file-text"></i>
+                <span>Baixar PDF</span>
+              </button>
+              <button id="btn-print" class="dropdown-item sub-item">
+                <i data-lucide="printer"></i>
+                <span>Imprimir (A4)</span>
+              </button>
+            </div>
+
+            <div class="dropdown-divider"></div>
+
+            <!-- 🗑 Excluir escala (Ação Destrutiva em Vermelho) -->
+            <button id="btn-clear-month" class="dropdown-item dropdown-item-danger" title="Limpar escala do mês">
+              <i data-lucide="trash-2"></i>
+              <span>Excluir escala</span>
             </button>
           </div>
         </div>
 
-        <!-- Admin Toggle -->
-        <button id="btn-toggle-admin" class="btn-admin-pill" title="Acesso Administrativo">
-          <i data-lucide="lock" id="admin-icon"></i>
-          <span id="admin-btn-text">Admin</span>
-        </button>
+        <!-- 5. SAIR DO ADMIN -->
+        <div class="topbar-block block-auth">
+          <button id="btn-toggle-admin" class="btn-admin-pill" title="Acesso Administrativo">
+            <i data-lucide="lock" id="admin-icon"></i>
+            <span id="admin-btn-text">Admin</span>
+          </button>
+        </div>
+
       </div>
 
     </div>

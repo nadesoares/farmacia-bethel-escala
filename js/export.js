@@ -12,8 +12,8 @@ class ExportManager {
   }
 
   bindEvents() {
-    const btnMenu = document.getElementById('btn-export-menu');
-    const dropdown = document.getElementById('export-dropdown');
+    const btnMenu = document.getElementById('btn-more-actions') || document.getElementById('btn-export-menu');
+    const dropdown = document.getElementById('more-actions-dropdown') || document.getElementById('export-dropdown');
 
     if (btnMenu && dropdown) {
       btnMenu.addEventListener('click', (e) => {
@@ -28,17 +28,26 @@ class ExportManager {
 
     const btnPrint = document.getElementById('btn-print');
     if (btnPrint) {
-      btnPrint.addEventListener('click', () => this.printCalendar());
+      btnPrint.addEventListener('click', () => {
+        if (dropdown) dropdown.classList.add('hidden');
+        this.printCalendar();
+      });
     }
 
     const btnImg = document.getElementById('btn-export-img');
     if (btnImg) {
-      btnImg.addEventListener('click', () => this.exportAsImage());
+      btnImg.addEventListener('click', () => {
+        if (dropdown) dropdown.classList.add('hidden');
+        this.exportAsImage();
+      });
     }
 
     const btnPdf = document.getElementById('btn-export-pdf');
     if (btnPdf) {
-      btnPdf.addEventListener('click', () => this.exportAsPDF());
+      btnPdf.addEventListener('click', () => {
+        if (dropdown) dropdown.classList.add('hidden');
+        this.exportAsPDF();
+      });
     }
   }
 

@@ -124,6 +124,7 @@ class CalendarManager {
     }
 
     document.getElementById('btn-clear-month')?.addEventListener('click', () => {
+      document.getElementById('more-actions-dropdown')?.classList.add('hidden');
       if (confirm(`Deseja realmente limpar toda a escala de ${MONTH_NAMES[this.currentMonth - 1]} / ${this.currentYear}?`)) {
         const yearMonthKey = `${this.currentYear}-${String(this.currentMonth).padStart(2, '0')}`;
         this.store.deleteMonthSchedule(yearMonthKey);
