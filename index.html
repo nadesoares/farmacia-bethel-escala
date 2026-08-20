@@ -3417,6 +3417,18 @@ class ExportManager {
       });
     }
 
+    if (dropdownMoreActions) {
+      dropdownMoreActions.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
+
+    if (dropdownMonthTeam) {
+      dropdownMonthTeam.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+    }
+
     // Fechar dropdowns ao clicar fora
     document.addEventListener('click', (e) => {
       if (dropdownMoreActions && !e.target.closest('#btn-more-actions') && !e.target.closest('#more-actions-dropdown')) {
