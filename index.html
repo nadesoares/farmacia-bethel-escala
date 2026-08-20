@@ -19,30 +19,29 @@
 </head>
 <body>
 
-  <!-- SINGLE UNIFIED TOP BAR COM LOGO FARMÁCIA BETHEL (REORGANIZADA EM 5 BLOCOS) -->
+  <!-- SINGLE UNIFIED TOP BAR COM LOGO FARMÁCIA BETHEL -->
   <header class="app-topbar no-print">
     <div class="topbar-container">
       
-      <!-- LOGO FARMÁCIA BETHEL -->
-      <div class="topbar-brand">
-        <div class="brand-bethel">
-          <div class="bethel-logo-icon">
-            <svg viewBox="0 0 100 100" class="bethel-svg">
-              <circle cx="50" cy="50" r="45" fill="#dc2626" stroke="#ffffff" stroke-width="5"/>
-              <path d="M40 22h20v18h18v20H60v18H40V60H22V40h18V22z" fill="#ffffff"/>
-            </svg>
-          </div>
-          <div class="bethel-text-group">
-            <span class="bethel-sub">Farmácia</span>
-            <span class="bethel-title">Bethel</span>
+      <!-- GRUPO ESQUERDO: LOGO + NAVEGAÇÃO DO MÊS -->
+      <div class="topbar-left-group">
+        <!-- LOGO FARMÁCIA BETHEL -->
+        <div class="topbar-brand">
+          <div class="brand-bethel">
+            <div class="bethel-logo-icon">
+              <svg viewBox="0 0 100 100" class="bethel-svg">
+                <circle cx="50" cy="50" r="45" fill="#dc2626" stroke="#ffffff" stroke-width="5"/>
+                <path d="M40 22h20v18h18v20H60v18H40V60H22V40h18V22z" fill="#ffffff"/>
+              </svg>
+            </div>
+            <div class="bethel-text-group">
+              <span class="bethel-sub">Farmácia</span>
+              <span class="bethel-title">Bethel</span>
+            </div>
           </div>
         </div>
-      </div>
 
-      <!-- FLUXO DOS 5 BLOCOS DA BARRA DE AÇÕES -->
-      <div class="topbar-content-flow">
-        
-        <!-- 1. NAVEGAÇÃO DO CALENDÁRIO -->
+        <!-- NAVEGAÇÃO DO CALENDÁRIO -->
         <div class="topbar-block block-nav">
           <div class="date-navigator">
             <button id="btn-prev-month" class="nav-arrow-btn" title="Mês Anterior">
@@ -61,8 +60,10 @@
             <span>Hoje</span>
           </button>
         </div>
+      </div>
 
-        <!-- 2. BLOCO DE FILTROS -->
+      <!-- GRUPO CENTRO: BLOCO DE FILTROS -->
+      <div class="topbar-center-group">
         <div class="topbar-block block-filters">
           <div class="filter-box">
             <i data-lucide="users"></i>
@@ -77,8 +78,11 @@
             <i data-lucide="chevron-down" class="icon-sm"></i>
           </button>
         </div>
+      </div>
 
-        <!-- 3. AÇÃO PRINCIPAL -->
+      <!-- GRUPO DIREITO: AÇÕES DE ADMIN E BOTÃO ADMIN -->
+      <div class="topbar-right-group">
+        <!-- AÇÃO PRINCIPAL (GERAR ESCALA) -->
         <div class="topbar-block block-main-action admin-only hidden">
           <button id="btn-auto-generate" class="btn btn-emerald" title="Gerar escala automática para a equipe deste mês">
             <i data-lucide="sparkles"></i>
@@ -86,7 +90,7 @@
           </button>
         </div>
 
-        <!-- 4. AÇÕES SECUNDÁRIAS (MENU MAIS AÇÕES) -->
+        <!-- AÇÕES SECUNDÁRIAS (MENU MAIS AÇÕES) -->
         <div class="topbar-block block-secondary-actions export-wrapper admin-only hidden">
           <button id="btn-more-actions" class="btn btn-secondary-pill" title="Outras Ações">
             <i data-lucide="more-vertical"></i>
@@ -137,14 +141,13 @@
           </div>
         </div>
 
-        <!-- 5. SAIR DO ADMIN -->
+        <!-- BOTÃO ADMIN (NO FINAL À DIREITA) -->
         <div class="topbar-block block-auth">
           <button id="btn-toggle-admin" class="btn-admin-pill" title="Acesso Administrativo">
             <i data-lucide="lock" id="admin-icon"></i>
             <span id="admin-btn-text">Admin</span>
           </button>
         </div>
-
       </div>
 
     </div>
@@ -1032,25 +1035,11 @@ class Store {
   getCampaigns() {
     const raw = localStorage.getItem(STORAGE_KEYS.CAMPAIGNS);
     if (!raw) {
-      const defaultCampaigns = [
-        {
-          id: 'camp-setembro-amarelo',
-          title: 'Ação Setembro Amarelo',
-          recurrenceType: 'CUSTOM_RANGE',
-          startDate: '2026-09-04',
-          endDate: '2026-09-08',
-          daysOfWeek: [5],
-          dayOfMonth: 4,
-          monthOfYear: 9,
-          color: '#eab308',
-          createdAt: new Date().toISOString()
-        }
-      ];
-      localStorage.setItem(STORAGE_KEYS.CAMPAIGNS, JSON.stringify(defaultCampaigns));
-      return defaultCampaigns;
+      return [];
     }
     try {
-      return JSON.parse(raw);
+      const list = JSON.parse(raw);
+      return list.filter(c => c.id !== 'camp-setembro-amarelo');
     } catch (e) {
       return [];
     }

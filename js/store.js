@@ -290,25 +290,11 @@ class Store {
   getCampaigns() {
     const raw = localStorage.getItem(STORAGE_KEYS.CAMPAIGNS);
     if (!raw) {
-      const defaultCampaigns = [
-        {
-          id: 'camp-setembro-amarelo',
-          title: 'Ação Setembro Amarelo',
-          recurrenceType: 'CUSTOM_RANGE',
-          startDate: '2026-09-04',
-          endDate: '2026-09-08',
-          daysOfWeek: [5],
-          dayOfMonth: 4,
-          monthOfYear: 9,
-          color: '#eab308',
-          createdAt: new Date().toISOString()
-        }
-      ];
-      localStorage.setItem(STORAGE_KEYS.CAMPAIGNS, JSON.stringify(defaultCampaigns));
-      return defaultCampaigns;
+      return [];
     }
     try {
-      return JSON.parse(raw);
+      const list = JSON.parse(raw);
+      return list.filter(c => c.id !== 'camp-setembro-amarelo');
     } catch (e) {
       return [];
     }
