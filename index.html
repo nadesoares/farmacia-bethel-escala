@@ -1676,6 +1676,11 @@ function getBrazilianHolidays(year) {
   return holidays;
 }
 
+const MONTH_NAMES = [
+  'JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO',
+  'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'
+];
+
 class CalendarManager {
   constructor(store, scheduler) {
     this.store = store;
@@ -2730,6 +2735,7 @@ class CalendarManager {
     const container = document.getElementById('month-team-checklist-container');
     if (!container) return;
     container.innerHTML = '';
+    container.style.cssText = 'display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.65rem; max-height: 420px; overflow-y: auto; padding: 0.25rem;';
 
     const allActiveEmployees = this.store.getActiveEmployees();
     const selectedIds = this.store.getMonthSelectedEmployeeIds(yearMonthKey);
@@ -2744,20 +2750,20 @@ class CalendarManager {
       const isChecked = selectedIds.includes(emp.id);
       const itemEl = document.createElement('label');
       itemEl.className = 'month-team-check-row';
-      itemEl.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0.85rem; background: rgba(255, 255, 255, 0.04); border-radius: var(--radius-xs); border: 1px solid var(--border-app); cursor: pointer; transition: all 0.2s ease;';
+      itemEl.style.cssText = 'display: flex; align-items: center; justify-content: space-between; padding: 0.65rem 0.85rem; background: #f8fafc; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer; transition: all 0.2s ease;';
 
       itemEl.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.65rem;">
           <input type="checkbox" class="month-emp-checkbox" value="${emp.id}" ${isChecked ? 'checked' : ''} style="width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary);">
-          <div class="emp-avatar-sm" style="background-color: ${emp.color || '#10b981'}; width: 28px; height: 28px; font-size: 0.75rem;">
+          <div class="emp-avatar-sm" style="background-color: ${emp.color || '#10b981'}; width: 28px; height: 28px; font-size: 0.75rem; font-weight: 800; color: #ffffff; display: flex; align-items: center; justify-content: center; border-radius: 50%;">
             ${emp.name.charAt(0)}
           </div>
           <div>
-            <h4 style="margin: 0; font-size: 0.85rem; font-weight: 700; color: #f8fafc;">${emp.name}</h4>
-            <span style="font-size: 0.72rem; color: var(--text-muted);">${emp.role || 'Balconista'}</span>
+            <h4 style="margin: 0; font-size: 0.88rem; font-weight: 900; color: #0f172a;">${emp.name}</h4>
+            <span style="font-size: 0.72rem; color: #475569; font-weight: 600;">${emp.role || 'Balconista'}</span>
           </div>
         </div>
-        <span style="font-size: 0.72rem; color: ${emp.color || '#10b981'}; font-weight: 600;">
+        <span style="font-size: 0.72rem; color: ${emp.color || '#10b981'}; font-weight: 700;">
           ${emp.prefShift === 'NIGHT_WEEKDAY' ? 'Noite Seg-Qui' : (emp.prefShift === 'PLANTONISTA' ? 'Plantonista' : 'Rodízio')}
         </span>
       `;
