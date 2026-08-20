@@ -12,6 +12,7 @@ class ExportManager {
   }
 
   bindEvents() {
+    // Dropdown 1: Mais Ações
     const btnMoreActions = document.getElementById('btn-more-actions');
     const dropdownMoreActions = document.getElementById('more-actions-dropdown');
 
@@ -24,6 +25,7 @@ class ExportManager {
       });
     }
 
+    // Dropdown 2: Equipe do Mês
     const btnMonthTeamGroup = document.getElementById('btn-month-team-group');
     const dropdownMonthTeam = document.getElementById('month-team-dropdown');
 
@@ -36,6 +38,15 @@ class ExportManager {
       });
     }
 
+    // StopPropagation dentro dos dropdowns
+    if (dropdownMoreActions) {
+      dropdownMoreActions.addEventListener('click', (e) => e.stopPropagation());
+    }
+    if (dropdownMonthTeam) {
+      dropdownMonthTeam.addEventListener('click', (e) => e.stopPropagation());
+    }
+
+    // Fechar dropdowns ao clicar fora
     document.addEventListener('click', (e) => {
       if (dropdownMoreActions && !e.target.closest('#btn-more-actions') && !e.target.closest('#more-actions-dropdown')) {
         dropdownMoreActions.classList.add('hidden');
@@ -45,10 +56,21 @@ class ExportManager {
       }
     });
 
+    // Botão Equipe ativa dentro do dropdown Equipe do Mês
+    const btnMonthTeam = document.getElementById('btn-month-team');
+    if (btnMonthTeam) {
+      btnMonthTeam.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdownMonthTeam?.classList.add('hidden');
+        window.calendarManager?.openMonthTeamModal();
+      });
+    }
+
+    // Botões Exportação
     const btnPrint = document.getElementById('btn-print');
     if (btnPrint) {
       btnPrint.addEventListener('click', () => {
-        if (dropdown) dropdown.classList.add('hidden');
+        dropdownMoreActions?.classList.add('hidden');
         this.printCalendar();
       });
     }
@@ -56,7 +78,7 @@ class ExportManager {
     const btnImg = document.getElementById('btn-export-img');
     if (btnImg) {
       btnImg.addEventListener('click', () => {
-        if (dropdown) dropdown.classList.add('hidden');
+        dropdownMoreActions?.classList.add('hidden');
         this.exportAsImage();
       });
     }
@@ -64,14 +86,14 @@ class ExportManager {
     const btnPdf = document.getElementById('btn-export-pdf');
     if (btnPdf) {
       btnPdf.addEventListener('click', () => {
-        if (dropdown) dropdown.classList.add('hidden');
+        dropdownMoreActions?.classList.add('hidden');
         this.exportAsPDF();
       });
     }
   }
 
   getFilename(ext) {
-    const monthTitle = document.getElementById('current-month-display').textContent.replace(/[\/\s]/g, '-');
+    const monthTitle = document.getElementById('current-month-display')?.textContent.replace(/[\/\s]/g, '-') || 'Escala';
     return `Escala-Farmacia-${monthTitle}.${ext}`;
   }
 
@@ -83,13 +105,14 @@ class ExportManager {
     const element = document.querySelector('.calendar-card');
     if (!element) return;
 
-    window.app.showToast('Gerando imagem em alta resolução...', 'info');
+    window.app?.showToast('Gerando imagem em alta resolução...', 'info');
 
     try {
+      if (!window.html2canvas) { window.print(); return; }
       const canvas = await window.html2canvas(element, {
-        scale: 2.5, // Ultra nitidez
+        scale: 2.5,
         useCORS: true,
-        backgroundColor: '#090d16', // Fundo Dark elegante
+        backgroundColor: '#ffffff',
         logging: false
       });
 
@@ -99,10 +122,10 @@ class ExportManager {
       link.href = imgData;
       link.click();
 
-      window.app.showToast('Imagem baixada com sucesso!', 'success');
+      window.app?.showToast('Imagem baixada com sucesso!', 'success');
     } catch (err) {
       console.error('Erro ao gerar imagem:', err);
-      window.app.showToast('Erro ao exportar imagem.', 'error');
+      window.app?.showToast('Erro ao exportar imagem.', 'error');
     }
   }
 
@@ -110,13 +133,14 @@ class ExportManager {
     const element = document.querySelector('.calendar-card');
     if (!element) return;
 
-    window.app.showToast('Gerando documento PDF...', 'info');
+    window.app?.showToast('Gerando documento PDF...', 'info');
 
     try {
+      if (!window.html2canvas || !window.jspdf) { window.print(); return; }
       const canvas = await window.html2canvas(element, {
         scale: 2.5,
         useCORS: true,
-        backgroundColor: '#090d16',
+        backgroundColor: '#ffffff',
         logging: false
       });
 
@@ -131,21 +155,19 @@ class ExportManager {
 
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
-
-      // Margem uniforme
       const margin = 8;
       const printableWidth = pageWidth - (margin * 2);
       const imgHeight = (canvas.height * printableWidth) / canvas.width;
 
-      pdf.setFillColor(9, 13, 22); // Fundo dark
+      pdf.setFillColor(255, 255, 255);
       pdf.rect(0, 0, pageWidth, pageHeight, 'F');
       pdf.addImage(imgData, 'PNG', margin, margin, printableWidth, Math.min(imgHeight, pageHeight - (margin * 2)));
       pdf.save(this.getFilename('pdf'));
 
-      window.app.showToast('PDF baixado com sucesso!', 'success');
+      window.app?.showToast('PDF baixado com sucesso!', 'success');
     } catch (err) {
       console.error('Erro ao gerar PDF:', err);
-      window.app.showToast('Erro ao exportar PDF.', 'error');
+      window.app?.showToast('Erro ao exportar PDF.', 'error');
     }
   }
 }

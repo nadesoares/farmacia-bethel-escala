@@ -3228,7 +3228,7 @@ class App {
 
     window.calendarManager = new CalendarManager(this.store, this.scheduler);
     window.employeeManager = new EmployeeManager(this.store);
-    window.exportManager = new ExportManager();
+    // ExportManager é instanciado no DOMContentLoaded para evitar duplicidade
 
     this.updateAdminUI();
     if (window.lucide) window.lucide.createIcons();
@@ -3563,8 +3563,10 @@ class ExportManager {
 
 // Inicialização automática ao carregar o documento
 document.addEventListener('DOMContentLoaded', () => {
-  window.exportManager = new ExportManager();
   new App();
+  // ExportManager é instanciado DEPOIS do App para garantir que o DOM está pronto
+  // e que updateAdminUI já rodou
+  window.exportManager = new ExportManager();
 });
   </script>
 </body>

@@ -96,6 +96,7 @@ h1, h2, h3, h4 {
   top: 0;
   z-index: 40;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  overflow: visible;
 }
 
 .topbar-container {
@@ -370,7 +371,7 @@ body.is-admin .btn-admin-pill {
   box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
 }
 
-.export-wrapper { position: relative; }
+.export-wrapper { position: relative; overflow: visible; }
 
 /* Menu Dropdown "Mais Ações" */
 .dropdown-menu {
@@ -378,17 +379,28 @@ body.is-admin .btn-admin-pill {
   top: calc(100% + 6px);
   right: 0;
   background: #ffffff;
-  border: 1px solid var(--border-app);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-pop);
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
   padding: 0.45rem;
-  min-width: 220px;
-  z-index: 50;
+  min-width: 230px;
+  z-index: 9999;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
+  box-sizing: border-box;
 }
-.dropdown-menu.hidden { display: none !important; }
+
+.month-team-dropdown {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+}
+
+/* Utilitário de visibilidade */
+.hidden {
+  display: none !important;
+}
 
 .dropdown-section {
   display: flex;
@@ -415,31 +427,6 @@ body.is-admin .btn-admin-pill {
   width: 13px;
   height: 13px;
   color: #64748b;
-}
-
-/* UTILITÁRIO HIDDEN E DROPDOWN MENUS */
-.hidden {
-  display: none !important;
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: calc(100% + 0.4rem);
-  right: 0;
-  background: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
-  border-radius: 12px !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
-  min-width: 230px;
-  padding: 0.5rem 0;
-  z-index: 9999 !important;
-  box-sizing: border-box;
-}
-
-.month-team-dropdown {
-  left: 50% !important;
-  right: auto !important;
-  transform: translateX(-50%) !important;
 }
 
 .dropdown-item {
