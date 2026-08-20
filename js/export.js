@@ -12,19 +12,38 @@ class ExportManager {
   }
 
   bindEvents() {
-    const btnMenu = document.getElementById('btn-more-actions') || document.getElementById('btn-export-menu');
-    const dropdown = document.getElementById('more-actions-dropdown') || document.getElementById('export-dropdown');
+    const btnMoreActions = document.getElementById('btn-more-actions');
+    const dropdownMoreActions = document.getElementById('more-actions-dropdown');
 
-    if (btnMenu && dropdown) {
-      btnMenu.addEventListener('click', (e) => {
+    if (btnMoreActions && dropdownMoreActions) {
+      btnMoreActions.addEventListener('click', (e) => {
         e.stopPropagation();
-        dropdown.classList.toggle('hidden');
-      });
-
-      document.addEventListener('click', () => {
-        dropdown.classList.add('hidden');
+        document.getElementById('month-team-dropdown')?.classList.add('hidden');
+        dropdownMoreActions.classList.toggle('hidden');
+        if (window.lucide) window.lucide.createIcons();
       });
     }
+
+    const btnMonthTeamGroup = document.getElementById('btn-month-team-group');
+    const dropdownMonthTeam = document.getElementById('month-team-dropdown');
+
+    if (btnMonthTeamGroup && dropdownMonthTeam) {
+      btnMonthTeamGroup.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.getElementById('more-actions-dropdown')?.classList.add('hidden');
+        dropdownMonthTeam.classList.toggle('hidden');
+        if (window.lucide) window.lucide.createIcons();
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      if (dropdownMoreActions && !e.target.closest('#btn-more-actions') && !e.target.closest('#more-actions-dropdown')) {
+        dropdownMoreActions.classList.add('hidden');
+      }
+      if (dropdownMonthTeam && !e.target.closest('#btn-month-team-group') && !e.target.closest('#month-team-dropdown')) {
+        dropdownMonthTeam.classList.add('hidden');
+      }
+    });
 
     const btnPrint = document.getElementById('btn-print');
     if (btnPrint) {
