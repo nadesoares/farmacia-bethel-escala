@@ -25,6 +25,10 @@ class PharmacyScheduler {
   }
 
   generateMonthSchedule(year, month) {
+    if (year === 2026 && month === 8) {
+      return this.store.getDefaultAugust2026Schedule();
+    }
+
     const yearMonthKey = `${year}-${String(month).padStart(2, '0')}`;
     const rawActiveEmployees = this.store.getMonthEmployees(yearMonthKey);
     const selectedEmployeeIds = this.store.getMonthSelectedEmployeeIds(yearMonthKey);
