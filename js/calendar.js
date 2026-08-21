@@ -67,9 +67,9 @@ class CalendarManager {
     this.store = store;
     this.scheduler = scheduler;
     
-    // Inicia no mês padrão de referência (Agosto de 2026)
+    // Inicia no mês padrão de referência (Julho de 2026)
     this.currentYear = 2026;
-    this.currentMonth = 8;
+    this.currentMonth = 7;
 
     this.draggedWorker = null;
     this.hasJustDragged = false;

@@ -855,6 +855,17 @@ class Store {
       localStorage.setItem(STORAGE_KEYS.EMPLOYEES, JSON.stringify(DEFAULT_EMPLOYEES));
     }
     const existingSchedules = this.getAllSchedules();
+    if (!existingSchedules['2026-07']) {
+      try {
+        if (window.PharmacyScheduler) {
+          const scheduler = new window.PharmacyScheduler(this);
+          existingSchedules['2026-07'] = scheduler.generateMonthSchedule(2026, 7);
+          localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(existingSchedules));
+        }
+      } catch (e) {
+        console.warn('Auto-geração de Julho/2026:', e);
+      }
+    }
     if (!existingSchedules['2026-08']) {
       existingSchedules['2026-08'] = this.getDefaultAugust2026Schedule();
       localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(existingSchedules));
@@ -1098,10 +1109,6 @@ class PharmacyScheduler {
   }
 
   generateMonthSchedule(year, month) {
-    if (year === 2026 && month === 8) {
-      return this.store.getDefaultAugust2026Schedule();
-    }
-
     const yearMonthKey = `${year}-${String(month).padStart(2, '0')}`;
     const rawActiveEmployees = this.store.getMonthEmployees(yearMonthKey);
     const selectedEmployeeIds = this.store.getMonthSelectedEmployeeIds(yearMonthKey);
@@ -1681,7 +1688,7 @@ class CalendarManager {
     this.store = store;
     this.scheduler = scheduler;
     this.currentYear = 2026;
-    this.currentMonth = 8;
+    this.currentMonth = 7;
     this.draggedWorker = null;
     this.hasJustDragged = false;
     this.init();

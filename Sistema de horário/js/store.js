@@ -7,6 +7,7 @@ const STORAGE_KEYS = {
   SCHEDULES: 'farmacia_escala_schedules_v17',
   ADMIN_PIN: 'farmacia_escala_admin_pin_v1',
   ADMIN_SESSION: 'farmacia_escala_admin_session_v1',
+  CAMPAIGNS: 'farmacia_escala_campaigns_v1',
 };
 
 const DEFAULT_EMPLOYEES = [
@@ -92,6 +93,17 @@ class Store {
       localStorage.setItem(STORAGE_KEYS.EMPLOYEES, JSON.stringify(DEFAULT_EMPLOYEES));
     }
     const existingSchedules = this.getAllSchedules();
+    if (!existingSchedules['2026-07']) {
+      try {
+        if (window.PharmacyScheduler) {
+          const scheduler = new window.PharmacyScheduler(this);
+          existingSchedules['2026-07'] = scheduler.generateMonthSchedule(2026, 7);
+          localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(existingSchedules));
+        }
+      } catch (e) {
+        console.warn('Auto-geração de Julho/2026:', e);
+      }
+    }
     if (!existingSchedules['2026-08']) {
       existingSchedules['2026-08'] = this.getDefaultAugust2026Schedule();
       localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(existingSchedules));
@@ -283,6 +295,44 @@ class Store {
       return true;
     }
     return false;
+  }
+
+  // --- GERENCIAMENTO DE AÇÕES / CAMPANHAS DA FARMÁCIA ---
+  getCampaigns() {
+    const raw = localStorage.getItem(STORAGE_KEYS.CAMPAIGNS);
+    if (!raw) {
+      return [];
+    }
+    try {
+      const list = JSON.parse(raw);
+      return list.filter(c => c.id !== 'camp-setembro-amarelo');
+    } catch (e) {
+      return [];
+    }
+  }
+
+  saveCampaign(campaign) {
+    const campaigns = this.getCampaigns();
+    if (!campaign.id) {
+      campaign.id = 'camp-' + Date.now();
+      campaign.createdAt = new Date().toISOString();
+      campaigns.push(campaign);
+    } else {
+      const index = campaigns.findIndex(c => c.id === campaign.id);
+      if (index !== -1) {
+        campaigns[index] = { ...campaigns[index], ...campaign };
+      } else {
+        campaigns.push(campaign);
+      }
+    }
+    localStorage.setItem(STORAGE_KEYS.CAMPAIGNS, JSON.stringify(campaigns));
+    return campaign;
+  }
+
+  deleteCampaign(id) {
+    let campaigns = this.getCampaigns();
+    campaigns = campaigns.filter(c => c.id !== id);
+    localStorage.setItem(STORAGE_KEYS.CAMPAIGNS, JSON.stringify(campaigns));
   }
 }
 
