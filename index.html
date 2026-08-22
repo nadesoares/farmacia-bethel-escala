@@ -345,18 +345,72 @@
             <div class="form-group flex-1">
               <label for="campaign-recurrence">Tipo de Recorrência / Duração *</label>
               <select id="campaign-recurrence" class="select-input-modern">
-                <option value="CUSTOM_RANGE">Período Personalizado (Início & Fim / N dias)</option>
-                <option value="WEEKLY">1x por Semana (Dia específico da semana)</option>
+                <option value="CUSTOM_RANGE">Período Personalizado (Início & Fim contínuo)</option>
                 <option value="WEEKDAYS_SPECIFIC">Dias Específicos da Semana (Seg, Ter, Qua...)</option>
-                <option value="WEEKEND">Todos os Fins de Semana</option>
-                <option value="MONTHLY_DAY">1x por Mês (Dia Fixo do Mês, ex: dia 15)</option>
-                <option value="MONTHLY_WEEKDAY">1x por Mês (Dia da Semana, ex: 1ª Terça)</option>
-                <option value="ANNUAL">Anual (Mesma data todos os anos)</option>
+                <option value="MONTHLY">1x por Mês (Dia Fixo ou por Semana/Dia)</option>
               </select>
             </div>
           </div>
 
-          <!-- Campos de datas / parâmetros de acordo com o tipo escolhido -->
+          <!-- SUB-OPÇÃO PARA DIAS ESPECÍFICOS DA SEMANA -->
+          <div id="group-specific-weekdays" class="form-group hidden" style="margin-top: 0.4rem;">
+            <label style="font-size: 0.78rem; font-weight: 700; color: #475569;">Escolha os dias da semana em que a promoção ficará ativa *</label>
+            <div id="weekdays-chips-container" style="display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.35rem;">
+              <button type="button" class="weekday-select-chip" data-day="MON">Seg</button>
+              <button type="button" class="weekday-select-chip" data-day="TUE">Ter</button>
+              <button type="button" class="weekday-select-chip selected" data-day="WED">Qua</button>
+              <button type="button" class="weekday-select-chip" data-day="THU">Qui</button>
+              <button type="button" class="weekday-select-chip" data-day="FRI">Sex</button>
+              <button type="button" class="weekday-select-chip" data-day="SAT">Sáb</button>
+              <button type="button" class="weekday-select-chip" data-day="SUN">Dom</button>
+            </div>
+          </div>
+
+          <!-- SUB-OPÇÃO PARA 1X POR MÊS -->
+          <div id="group-monthly-options" class="form-group hidden" style="margin-top: 0.4rem; background: #f8fafc; padding: 0.6rem 0.75rem; border-radius: 8px; border: 1px solid #cbd5e1;">
+            <label style="font-size: 0.78rem; font-weight: 700; color: #334155; margin-bottom: 0.4rem; display: block;">Modo Mensal *</label>
+            
+            <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 0.5rem;">
+              <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; font-weight: 600; cursor: pointer; color: #0f172a;">
+                <input type="radio" name="monthly-mode" value="FIXED_DAY" checked style="accent-color: #10b981;"> Dia Fixo do Mês
+              </label>
+              <label style="display: flex; align-items: center; gap: 0.35rem; font-size: 0.82rem; font-weight: 600; cursor: pointer; color: #0f172a;">
+                <input type="radio" name="monthly-mode" value="WEEKDAY_ORDINAL" style="accent-color: #10b981;"> Semana e Dia da Semana
+              </label>
+            </div>
+
+            <!-- Opção A: Dia Fixo (Digitar dia) -->
+            <div id="monthly-fixed-day-box" class="form-group" style="margin-top: 0.25rem;">
+              <label for="campaign-monthly-day" style="font-size: 0.75rem; color: #64748b;">Número do Dia do Mês (1 a 31) *</label>
+              <input type="number" id="campaign-monthly-day" class="form-input-modern" min="1" max="31" value="15" placeholder="Ex: 15">
+            </div>
+
+            <!-- Opção B: Semana e Dia da Semana (Dropdown) -->
+            <div id="monthly-weekday-ordinal-box" class="form-group hidden" style="margin-top: 0.25rem;">
+              <label for="campaign-monthly-ordinal" style="font-size: 0.75rem; color: #64748b;">Selecione a Semana e Dia *</label>
+              <select id="campaign-monthly-ordinal" class="select-input-modern">
+                <option value="1_TUE">1ª Terça-feira do mês</option>
+                <option value="1_WED">1ª Quarta-feira do mês</option>
+                <option value="1_THU">1ª Quinta-feira do mês</option>
+                <option value="1_FRI">1ª Sexta-feira do mês</option>
+                <option value="2_TUE">2ª Terça-feira do mês</option>
+                <option value="2_WED">2ª Quarta-feira do mês</option>
+                <option value="2_THU">2ª Quinta-feira do mês</option>
+                <option value="2_FRI">2ª Sexta-feira do mês</option>
+                <option value="3_TUE">3ª Terça-feira do mês</option>
+                <option value="3_WED">3ª Quarta-feira do mês</option>
+                <option value="3_THU">3ª Quinta-feira do mês</option>
+                <option value="3_FRI">3ª Sexta-feira do mês</option>
+                <option value="4_TUE">4ª Terça-feira do mês</option>
+                <option value="4_WED">4ª Quarta-feira do mês</option>
+                <option value="4_THU">4ª Quinta-feira do mês</option>
+                <option value="4_FRI">4ª Sexta-feira do mês</option>
+                <option value="LAST_FRI">Última Sexta-feira do mês</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Campos de datas / parâmetros -->
           <div id="campaign-dates-container" class="form-row" style="margin-top: 0.4rem;">
             <div class="form-group flex-1">
               <label for="campaign-start-date">Data de Início *</label>
@@ -2523,8 +2577,6 @@ class CalendarManager {
 
       if (camp.recurrenceType === 'CUSTOM_RANGE') {
         isActive = true;
-      } else if (camp.recurrenceType === 'WEEKLY') {
-        isActive = (tDay === sDay);
       } else if (camp.recurrenceType === 'WEEKDAYS_SPECIFIC') {
         const dayMap = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
         const dayStr = dayMap[tDay];
@@ -2533,16 +2585,25 @@ class CalendarManager {
         } else {
           isActive = (tDay >= 1 && tDay <= 5);
         }
-      } else if (camp.recurrenceType === 'WEEKEND') {
-        isActive = (tDay === 0 || tDay === 6);
-      } else if (camp.recurrenceType === 'MONTHLY_DAY') {
-        isActive = (tDate === sDate);
-      } else if (camp.recurrenceType === 'MONTHLY_WEEKDAY') {
-        const sWeekNum = Math.ceil(sDate / 7);
-        const tWeekNum = Math.ceil(tDate / 7);
-        isActive = (tDay === sDay && tWeekNum === sWeekNum);
-      } else if (camp.recurrenceType === 'ANNUAL') {
-        isActive = (tMonth === sMonth && tDate === sDate);
+      } else if (camp.recurrenceType === 'MONTHLY' || camp.recurrenceType === 'MONTHLY_DAY' || camp.recurrenceType === 'MONTHLY_WEEKDAY') {
+        if (camp.monthlyMode === 'WEEKDAY_ORDINAL' && camp.monthlyOrdinal) {
+          const parts = camp.monthlyOrdinal.split('_');
+          const dayMap = { SUN: 0, MON: 1, TUE: 2, WED: 3, THU: 4, FRI: 5, SAT: 6 };
+          const reqDay = dayMap[parts[1]];
+
+          if (tDay === reqDay) {
+            if (parts[0] === 'LAST') {
+              const nextWeekSameDay = new Date(targetDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+              isActive = (nextWeekSameDay.getMonth() !== targetDate.getMonth());
+            } else {
+              const weekNum = Math.ceil(tDate / 7);
+              isActive = (weekNum === parseInt(parts[0], 10));
+            }
+          }
+        } else {
+          const targetDayNum = camp.monthlyDay || startDate.getDate();
+          isActive = (tDate === targetDayNum);
+        }
       }
 
       if (isActive) {

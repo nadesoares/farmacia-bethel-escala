@@ -1018,8 +1018,6 @@ class CalendarManager {
 
       if (camp.recurrenceType === 'CUSTOM_RANGE') {
         isActive = true;
-      } else if (camp.recurrenceType === 'WEEKLY') {
-        isActive = (tDay === sDay);
       } else if (camp.recurrenceType === 'WEEKDAYS_SPECIFIC') {
         const dayMap = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
         const dayStr = dayMap[tDay];
@@ -1028,16 +1026,25 @@ class CalendarManager {
         } else {
           isActive = (tDay >= 1 && tDay <= 5);
         }
-      } else if (camp.recurrenceType === 'WEEKEND') {
-        isActive = (tDay === 0 || tDay === 6);
-      } else if (camp.recurrenceType === 'MONTHLY_DAY') {
-        isActive = (tDate === sDate);
-      } else if (camp.recurrenceType === 'MONTHLY_WEEKDAY') {
-        const sWeekNum = Math.ceil(sDate / 7);
-        const tWeekNum = Math.ceil(tDate / 7);
-        isActive = (tDay === sDay && tWeekNum === sWeekNum);
-      } else if (camp.recurrenceType === 'ANNUAL') {
-        isActive = (tMonth === sMonth && tDate === sDate);
+      } else if (camp.recurrenceType === 'MONTHLY' || camp.recurrenceType === 'MONTHLY_DAY' || camp.recurrenceType === 'MONTHLY_WEEKDAY') {
+        if (camp.monthlyMode === 'WEEKDAY_ORDINAL' && camp.monthlyOrdinal) {
+          const parts = camp.monthlyOrdinal.split('_');
+          const dayMap = { SUN: 0, MON: 1, TUE: 2, WED: 3, THU: 4, FRI: 5, SAT: 6 };
+          const reqDay = dayMap[parts[1]];
+
+          if (tDay === reqDay) {
+            if (parts[0] === 'LAST') {
+              const nextWeekSameDay = new Date(targetDate.getTime() + 7 * 24 * 60 * 60 * 1000);
+              isActive = (nextWeekSameDay.getMonth() !== targetDate.getMonth());
+            } else {
+              const weekNum = Math.ceil(tDate / 7);
+              isActive = (weekNum === parseInt(parts[0], 10));
+            }
+          }
+        } else {
+          const targetDayNum = camp.monthlyDay || startDate.getDate();
+          isActive = (tDate === targetDayNum);
+        }
       }
 
       if (isActive) {
@@ -1103,6 +1110,39 @@ class CalendarManager {
       });
     }
 
+    const selectRecurrence = document.getElementById('campaign-recurrence');
+    const updateRecurrenceFields = () => {
+      const val = selectRecurrence?.value;
+      const groupWeekdays = document.getElementById('group-specific-weekdays');
+      const groupMonthly = document.getElementById('group-monthly-options');
+
+      if (groupWeekdays) groupWeekdays.classList.toggle('hidden', val !== 'WEEKDAYS_SPECIFIC');
+      if (groupMonthly) groupMonthly.classList.toggle('hidden', val !== 'MONTHLY');
+    };
+
+    selectRecurrence?.addEventListener('change', updateRecurrenceFields);
+
+    const monthlyRadios = document.querySelectorAll('input[name="monthly-mode"]');
+    monthlyRadios.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        const fixedBox = document.getElementById('monthly-fixed-day-box');
+        const ordinalBox = document.getElementById('monthly-weekday-ordinal-box');
+        if (fixedBox && ordinalBox) {
+          fixedBox.classList.toggle('hidden', e.target.value !== 'FIXED_DAY');
+          ordinalBox.classList.toggle('hidden', e.target.value !== 'WEEKDAY_ORDINAL');
+        }
+      });
+    });
+
+    const chipsContainer = document.getElementById('weekdays-chips-container');
+    if (chipsContainer) {
+      chipsContainer.addEventListener('click', (e) => {
+        const btn = e.target.closest('.weekday-select-chip');
+        if (!btn) return;
+        btn.classList.toggle('selected');
+      });
+    }
+
     const formCampaign = document.getElementById('form-campaign');
     if (formCampaign) {
       formCampaign.addEventListener('submit', (e) => {
@@ -1119,13 +1159,37 @@ class CalendarManager {
           return;
         }
 
+        let specificDays = [];
+        if (recurrenceType === 'WEEKDAYS_SPECIFIC') {
+          const selectedChips = document.querySelectorAll('#weekdays-chips-container .weekday-select-chip.selected');
+          specificDays = Array.from(selectedChips).map(btn => btn.dataset.day);
+          if (specificDays.length === 0) {
+            window.app?.showToast('Selecione pelo menos 1 dia da semana.', 'warning');
+            return;
+          }
+        }
+
+        let monthlyMode = 'FIXED_DAY';
+        let monthlyDay = 15;
+        let monthlyOrdinal = '1_TUE';
+        if (recurrenceType === 'MONTHLY') {
+          const checkedRadio = document.querySelector('input[name="monthly-mode"]:checked');
+          monthlyMode = checkedRadio ? checkedRadio.value : 'FIXED_DAY';
+          monthlyDay = parseInt(document.getElementById('campaign-monthly-day')?.value, 10) || 15;
+          monthlyOrdinal = document.getElementById('campaign-monthly-ordinal')?.value || '1_TUE';
+        }
+
         const campaign = {
           id: id || undefined,
           title,
           recurrenceType,
           startDate,
           endDate: endDate || startDate,
-          color
+          color,
+          specificDays,
+          monthlyMode,
+          monthlyDay,
+          monthlyOrdinal
         };
 
         this.store.saveCampaign(campaign);
@@ -1169,6 +1233,9 @@ class CalendarManager {
     }
     const colorVal = document.getElementById('campaign-color-val');
     if (colorVal) colorVal.value = '#eab308';
+
+    document.getElementById('group-specific-weekdays')?.classList.add('hidden');
+    document.getElementById('group-monthly-options')?.classList.add('hidden');
   }
 
   openCampaignsModal() {
@@ -1221,6 +1288,29 @@ class CalendarManager {
         if (titleEl) titleEl.textContent = '✏️ Editar Ação / Campanha';
         document.getElementById('btn-cancel-campaign-edit')?.classList.remove('hidden');
 
+        // Toggle subfields
+        const groupWeekdays = document.getElementById('group-specific-weekdays');
+        const groupMonthly = document.getElementById('group-monthly-options');
+        if (groupWeekdays) groupWeekdays.classList.toggle('hidden', c.recurrenceType !== 'WEEKDAYS_SPECIFIC');
+        if (groupMonthly) groupMonthly.classList.toggle('hidden', c.recurrenceType !== 'MONTHLY');
+
+        if (c.specificDays && Array.isArray(c.specificDays)) {
+          document.querySelectorAll('#weekdays-chips-container .weekday-select-chip').forEach(btn => {
+            if (c.specificDays.includes(btn.dataset.day)) btn.classList.add('selected');
+            else btn.classList.remove('selected');
+          });
+        }
+
+        if (c.monthlyMode) {
+          const radio = document.querySelector(`input[name="monthly-mode"][value="${c.monthlyMode}"]`);
+          if (radio) {
+            radio.checked = true;
+            radio.dispatchEvent(new Event('change'));
+          }
+        }
+        if (c.monthlyDay) document.getElementById('campaign-monthly-day').value = c.monthlyDay;
+        if (c.monthlyOrdinal) document.getElementById('campaign-monthly-ordinal').value = c.monthlyOrdinal;
+
         const colorContainer = document.getElementById('color-presets-container');
         if (colorContainer) {
           colorContainer.querySelectorAll('.color-preset-btn').forEach(b => {
@@ -1228,6 +1318,7 @@ class CalendarManager {
             else b.classList.remove('active');
           });
         }
+      });
       });
 
       row.querySelector('.btn-del-camp')?.addEventListener('click', () => {

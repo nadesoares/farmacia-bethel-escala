@@ -1513,6 +1513,29 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 }
 
 /* Presets de Cores no Form */
+.weekday-select-chip {
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.weekday-select-chip:hover {
+  border-color: #10b981;
+  color: #0f172a;
+}
+
+.weekday-select-chip.selected {
+  background: #10b981 !important;
+  color: #ffffff !important;
+  border-color: #059669 !important;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35);
+}
 .color-presets-row {
   display: flex;
   flex-wrap: wrap;
