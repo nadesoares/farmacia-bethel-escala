@@ -415,17 +415,20 @@ class CalendarManager {
       const dayHeaderGroup = document.createElement('div');
       dayHeaderGroup.className = 'day-header-group';
 
-      const dayHeader = document.createElement('div');
+      const topRow = document.createElement('div');
+      topRow.className = 'day-header-top-row';
+
+      const dayHeader = document.createElement('span');
       dayHeader.className = 'day-header-badge';
       dayHeader.textContent = day;
-      dayHeaderGroup.appendChild(dayHeader);
+      topRow.appendChild(dayHeader);
 
       if (isToday) {
         const todayBadge = document.createElement('span');
         todayBadge.className = 'today-badge-tag';
         todayBadge.textContent = 'HOJE';
         todayBadge.title = 'Hoje';
-        dayHeaderGroup.appendChild(todayBadge);
+        topRow.appendChild(todayBadge);
       }
 
       if (isHoliday) {
@@ -433,8 +436,13 @@ class CalendarManager {
         holBadge.className = 'holiday-badge-tag';
         holBadge.textContent = 'Feriado';
         holBadge.title = holidayName;
-        dayHeaderGroup.appendChild(holBadge);
+        topRow.appendChild(holBadge);
       }
+
+      dayHeaderGroup.appendChild(topRow);
+
+      const actionsStack = document.createElement('div');
+      actionsStack.className = 'day-actions-stack';
 
       const allCampaigns = this.store.getCampaigns();
       const activeCampaigns = this.getCampaignStatusForDate(dateKey, allCampaigns);
@@ -461,12 +469,16 @@ class CalendarManager {
         }
         campBadge.title = `Ação: ${campaign.title}`;
         campBadge.innerHTML = `<i data-lucide="target" style="width: 10px; height: 10px;"></i> <span>${campaign.title}</span>`;
-        dayHeaderGroup.appendChild(campBadge);
+        actionsStack.appendChild(campBadge);
 
         if (isRadarAlert) {
           radarColors.push(campaign.color || '#eab308');
         }
       });
+
+      if (actionsStack.children.length > 0) {
+        dayHeaderGroup.appendChild(actionsStack);
+      }
 
       const uniqueRadarColors = [...new Set(radarColors)];
       if (uniqueRadarColors.length === 1) {

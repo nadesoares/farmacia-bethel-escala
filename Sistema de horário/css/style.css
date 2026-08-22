@@ -743,8 +743,24 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
 /* BADGES DOS DIAS */
 .day-header-group {
   display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+  width: 100%;
+}
+
+.day-header-top-row {
+  display: flex;
   align-items: center;
   gap: 0.3rem;
+}
+
+.day-actions-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  width: 100%;
+  margin-top: 0.15rem;
 }
 
 .day-header-badge {
@@ -1457,15 +1473,16 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   font-size: 0.62rem;
   font-weight: 800;
   color: #ffffff;
-  padding: 0.1rem 0.4rem;
+  padding: 0.12rem 0.45rem;
   border-radius: var(--radius-pill);
   letter-spacing: 0.02em;
-  line-height: 1.1;
+  line-height: 1.25;
   display: inline-flex;
   align-items: center;
-  gap: 0.2rem;
+  gap: 0.25rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
-  max-width: 130px;
+  max-width: 100%;
+  width: fit-content;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
