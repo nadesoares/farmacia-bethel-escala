@@ -67,9 +67,10 @@ class CalendarManager {
     this.store = store;
     this.scheduler = scheduler;
     
-    // Inicia no mês padrão de referência (Julho de 2026)
-    this.currentYear = 2026;
-    this.currentMonth = 7;
+    // Inicia dinamicamente no mês e ano atual em tempo real (HOJE)
+    const now = new Date();
+    this.currentYear = now.getFullYear();
+    this.currentMonth = now.getMonth() + 1;
 
     this.draggedWorker = null;
     this.hasJustDragged = false;
@@ -80,6 +81,12 @@ class CalendarManager {
   init() {
     this.bindEvents();
     this.render();
+    setTimeout(() => {
+      const todayCell = document.querySelector('.calendar-day-cell.is-today');
+      if (todayCell) {
+        todayCell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 150);
   }
 
   bindEvents() {
