@@ -95,12 +95,6 @@
               <span>Configurações</span>
             </button>
 
-            <!-- 🎯 Ações na Farmácia -->
-            <button id="btn-manage-campaigns" class="dropdown-item">
-              <i data-lucide="target"></i>
-              <span>Ações na Farmácia</span>
-            </button>
-
             <!-- ⬇ Baixar / Imprimir (Seção com Sub-itens) -->
             <div class="dropdown-section">
               <div class="dropdown-section-title">
@@ -340,7 +334,10 @@
           <!-- Dynamic items rendered -->
         </div>
       </div>
-      <div class="modal-footer" style="display: flex; justify-content: flex-end;">
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" id="btn-open-admin-campaigns" class="btn btn-emerald btn-sm admin-only hidden" title="Cadastrar nova ação ou gerenciar ações da farmácia">
+          <i data-lucide="plus"></i> Criar Nova Ação
+        </button>
         <button type="button" class="btn btn-ghost" data-modal="modal-public-campaigns">Fechar</button>
       </div>
     </div>
@@ -2760,10 +2757,10 @@ class CalendarManager {
       });
     }
 
-    const btnCampaigns = document.getElementById('btn-manage-campaigns');
-    if (btnCampaigns) {
-      btnCampaigns.addEventListener('click', () => {
-        document.getElementById('more-actions-dropdown')?.classList.add('hidden');
+    const btnOpenAdminCamp = document.getElementById('btn-open-admin-campaigns');
+    if (btnOpenAdminCamp) {
+      btnOpenAdminCamp.addEventListener('click', () => {
+        window.app?.closeModal('modal-public-campaigns');
         this.openCampaignsModal();
       });
     }
@@ -2977,6 +2974,10 @@ class CalendarManager {
 
   openPublicCampaignsModal() {
     this.renderPublicCampaignsList();
+    const btnAdminCamp = document.getElementById('btn-open-admin-campaigns');
+    if (btnAdminCamp) {
+      btnAdminCamp.classList.toggle('hidden', !this.store.isAdmin());
+    }
     window.app?.openModal('modal-public-campaigns');
   }
 

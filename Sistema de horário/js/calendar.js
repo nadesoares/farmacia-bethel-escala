@@ -1163,10 +1163,10 @@ class CalendarManager {
       });
     }
 
-    const btnCampaigns = document.getElementById('btn-manage-campaigns');
-    if (btnCampaigns) {
-      btnCampaigns.addEventListener('click', () => {
-        document.getElementById('more-actions-dropdown')?.classList.add('hidden');
+    const btnOpenAdminCamp = document.getElementById('btn-open-admin-campaigns');
+    if (btnOpenAdminCamp) {
+      btnOpenAdminCamp.addEventListener('click', () => {
+        window.app?.closeModal('modal-public-campaigns');
         this.openCampaignsModal();
       });
     }
@@ -1380,6 +1380,10 @@ class CalendarManager {
 
   openPublicCampaignsModal() {
     this.renderPublicCampaignsList();
+    const btnAdminCamp = document.getElementById('btn-open-admin-campaigns');
+    if (btnAdminCamp) {
+      btnAdminCamp.classList.toggle('hidden', !this.store.isAdmin());
+    }
     window.app?.openModal('modal-public-campaigns');
   }
 
