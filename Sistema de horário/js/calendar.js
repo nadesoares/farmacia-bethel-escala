@@ -438,6 +438,8 @@ class CalendarManager {
 
       const allCampaigns = this.store.getCampaigns();
       const activeCampaigns = this.getCampaignStatusForDate(dateKey, allCampaigns);
+      const radarColors = [];
+
       activeCampaigns.forEach(({ campaign, isActive, isRadarAlert }) => {
         if (!isActive) return;
 
@@ -449,19 +451,38 @@ class CalendarManager {
         dayHeaderGroup.appendChild(campBadge);
 
         if (isRadarAlert) {
-          const campColor = campaign.color || '#eab308';
-          const hexToRgba = (hex, alpha) => {
-            let c = (hex || '#eab308').replace('#', '');
-            if (c.length === 3) c = c.split('').map(x => x + x).join('');
-            const num = parseInt(c, 16);
-            return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
-          };
-          dayCell.classList.add('pulse-upcoming-day-box');
-          dayCell.style.setProperty('--campaign-color', campColor);
-          dayCell.style.setProperty('--campaign-glow-start', hexToRgba(campColor, 0.35));
-          dayCell.style.setProperty('--campaign-glow-peak', hexToRgba(campColor, 0.85));
+          radarColors.push(campaign.color || '#eab308');
         }
       });
+
+      const uniqueRadarColors = [...new Set(radarColors)];
+      if (uniqueRadarColors.length === 1) {
+        const campColor = uniqueRadarColors[0];
+        const hexToRgba = (hex, alpha) => {
+          let c = (hex || '#eab308').replace('#', '');
+          if (c.length === 3) c = c.split('').map(x => x + x).join('');
+          const num = parseInt(c, 16);
+          return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
+        };
+        dayCell.classList.add('pulse-upcoming-day-box');
+        dayCell.style.setProperty('--campaign-color', campColor);
+        dayCell.style.setProperty('--campaign-glow-start', hexToRgba(campColor, 0.35));
+        dayCell.style.setProperty('--campaign-glow-peak', hexToRgba(campColor, 0.85));
+      } else if (uniqueRadarColors.length >= 2) {
+        const hexToRgba = (hex, alpha) => {
+          let c = (hex || '#eab308').replace('#', '');
+          if (c.length === 3) c = c.split('').map(x => x + x).join('');
+          const num = parseInt(c, 16);
+          return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
+        };
+        const shadowPeak = uniqueRadarColors.map((col, idx) => `0 0 ${16 + idx * 8}px ${4 + idx * 2}px ${hexToRgba(col, 0.85)}`).join(', ');
+        const shadowStart = uniqueRadarColors.map((col, idx) => `0 0 0 0 ${hexToRgba(col, 0.35)}`).join(', ');
+
+        dayCell.classList.add('pulse-gradient-day-box');
+        dayCell.style.setProperty('--campaign-gradient-border', `linear-gradient(135deg, ${uniqueRadarColors.join(', ')})`);
+        dayCell.style.setProperty('--campaign-glow-start', shadowStart);
+        dayCell.style.setProperty('--campaign-glow-peak', shadowPeak);
+      }
 
       topbarEl.appendChild(dayHeaderGroup);
 

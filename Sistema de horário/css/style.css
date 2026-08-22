@@ -1494,6 +1494,24 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   }
 }
 
+.pulse-gradient-day-box {
+  animation: pulse-gradient-day 1.6s infinite ease-in-out !important;
+  border-style: solid !important;
+  border-width: 2px !important;
+  border-image: var(--campaign-gradient-border, linear-gradient(135deg, #eab308, #0284c7)) 1 !important;
+  border-radius: 12px !important;
+  z-index: 5 !important;
+}
+
+@keyframes pulse-gradient-day {
+  0%, 100% {
+    box-shadow: var(--campaign-glow-start, 0 0 0 0 rgba(234, 179, 8, 0.4));
+  }
+  50% {
+    box-shadow: var(--campaign-glow-peak, 0 0 18px 5px rgba(234, 179, 8, 0.85));
+  }
+}
+
 @keyframes pulse-radar {
   0% {
     transform: scale(1);
