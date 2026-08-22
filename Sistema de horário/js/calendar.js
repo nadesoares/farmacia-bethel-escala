@@ -477,11 +477,12 @@ class CalendarManager {
 
       const allCampaigns = this.store.getCampaigns();
       const activeCampaigns = this.getCampaignStatusForDate(dateKey, allCampaigns);
+      const activeList = activeCampaigns.filter(c => c.isActive);
       const radarColors = [];
 
-      activeCampaigns.forEach(({ campaign, isActive, isRadarAlert }) => {
-        if (!isActive) return;
+      const isSingleAction = (activeList.length === 1);
 
+      activeList.forEach(({ campaign, isRadarAlert }) => {
         const campColor = campaign.color || '#eab308';
         const hexToRgba = (hex, alpha) => {
           let c = (hex || '#eab308').replace('#', '');
@@ -500,14 +501,19 @@ class CalendarManager {
         }
         campBadge.title = `Ação: ${campaign.title}`;
         campBadge.innerHTML = `<i data-lucide="target" style="width: 10px; height: 10px;"></i> <span>${campaign.title}</span>`;
-        actionsStack.appendChild(campBadge);
+
+        if (isSingleAction) {
+          topRow.appendChild(campBadge);
+        } else {
+          actionsStack.appendChild(campBadge);
+        }
 
         if (isRadarAlert) {
           radarColors.push(campaign.color || '#eab308');
         }
       });
 
-      if (actionsStack.children.length > 0) {
+      if (!isSingleAction && actionsStack.children.length > 0) {
         dayHeaderGroup.appendChild(actionsStack);
       }
 

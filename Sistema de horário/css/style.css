@@ -753,6 +753,8 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   display: flex;
   align-items: center;
   gap: 0.3rem;
+  width: 100%;
+  overflow: hidden;
 }
 
 .day-actions-stack {
