@@ -1101,7 +1101,13 @@ class CalendarManager {
     if (window.lucide) window.lucide.createIcons();
   }
 
-  bindCampaignEvents() {
+    const btnPublicCampaigns = document.getElementById('btn-public-campaigns');
+    if (btnPublicCampaigns) {
+      btnPublicCampaigns.addEventListener('click', () => {
+        this.openPublicCampaignsModal();
+      });
+    }
+
     const btnCampaigns = document.getElementById('btn-manage-campaigns');
     if (btnCampaigns) {
       btnCampaigns.addEventListener('click', () => {
@@ -1237,6 +1243,130 @@ class CalendarManager {
 
     document.getElementById('group-specific-weekdays')?.classList.add('hidden');
     document.getElementById('group-monthly-options')?.classList.add('hidden');
+  }
+
+  formatCampaignDetailText(c) {
+    if (!c) return '';
+
+    const formatDate = (isoStr) => {
+      if (!isoStr) return '';
+      const [y, m, d] = isoStr.split('-');
+      return `${d}/${m}/${y}`;
+    };
+
+    const startStr = formatDate(c.startDate);
+    const endStr = formatDate(c.endDate || c.startDate);
+    const periodText = (startStr && endStr && startStr !== endStr)
+      ? `de ${startStr} até ${endStr}`
+      : `no dia ${startStr}`;
+
+    if (c.recurrenceType === 'WEEKDAYS_SPECIFIC' && c.specificDays && Array.isArray(c.specificDays) && c.specificDays.length > 0) {
+      const dayNameMap = {
+        MON: 'segunda-feira',
+        TUE: 'terça-feira',
+        WED: 'quarta-feira',
+        THU: 'quinta-feira',
+        FRI: 'sexta-feira',
+        SAT: 'sábado',
+        SUN: 'domingo'
+      };
+
+      const daysFormatted = c.specificDays.map(d => dayNameMap[d] || d);
+      let daysPhrase = '';
+
+      if (daysFormatted.length === 1) {
+        const single = daysFormatted[0];
+        daysPhrase = (single === 'sábado' || single === 'domingo')
+          ? `todo ${single}`
+          : `todas as ${single}s`;
+      } else {
+        const last = daysFormatted.pop();
+        daysPhrase = `todas as ${daysFormatted.join(', ')} e ${last}s`;
+      }
+
+      return `Esta ação está cadastrada ${daysPhrase} ${periodText}.`;
+    }
+
+    if (c.recurrenceType === 'CUSTOM_RANGE') {
+      return `Esta ação está cadastrada em período contínuo ${periodText}.`;
+    }
+
+    if (c.recurrenceType === 'MONTHLY' || c.recurrenceType === 'MONTHLY_DAY' || c.recurrenceType === 'MONTHLY_WEEKDAY') {
+      if (c.monthlyMode === 'WEEKDAY_ORDINAL' && c.monthlyOrdinal) {
+        const ordinalLabels = {
+          '1_TUE': '1ª Terça-feira',
+          '1_WED': '1ª Quarta-feira',
+          '1_THU': '1ª Quinta-feira',
+          '1_FRI': '1ª Sexta-feira',
+          '2_TUE': '2ª Terça-feira',
+          '2_WED': '2ª Quarta-feira',
+          '2_THU': '2ª Quinta-feira',
+          '2_FRI': '2ª Sexta-feira',
+          '3_TUE': '3ª Terça-feira',
+          '3_WED': '3ª Quarta-feira',
+          '3_THU': '3ª Quinta-feira',
+          '3_FRI': '3ª Sexta-feira',
+          '4_TUE': '4ª Terça-feira',
+          '4_WED': '4ª Quarta-feira',
+          '4_THU': '4ª Quinta-feira',
+          '4_FRI': '4ª Sexta-feira',
+          'LAST_FRI': 'Última Sexta-feira'
+        };
+        const label = ordinalLabels[c.monthlyOrdinal] || c.monthlyOrdinal;
+        return `Esta ação está cadastrada toda ${label} do mês ${periodText}.`;
+      } else {
+        const dayNum = c.monthlyDay || (c.startDate ? c.startDate.split('-')[2] : 15);
+        return `Esta ação está cadastrada todo dia ${dayNum} de cada mês ${periodText}.`;
+      }
+    }
+
+    return `Esta ação está cadastrada ${periodText}.`;
+  }
+
+  openPublicCampaignsModal() {
+    this.renderPublicCampaignsList();
+    window.app?.openModal('modal-public-campaigns');
+  }
+
+  renderPublicCampaignsList() {
+    const container = document.getElementById('public-campaigns-list-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    const campaigns = this.store.getCampaigns();
+    if (!campaigns || campaigns.length === 0) {
+      container.innerHTML = `
+        <div style="text-align: center; padding: 2rem 1rem; color: #64748b;">
+          <i data-lucide="target" style="width: 36px; height: 36px; opacity: 0.4; margin-bottom: 0.5rem;"></i>
+          <p style="margin: 0; font-size: 0.9rem; font-weight: 600;">Nenhuma ação ou campanha cadastrada no momento.</p>
+        </div>
+      `;
+      if (window.lucide) window.lucide.createIcons();
+      return;
+    }
+
+    campaigns.forEach(c => {
+      const detailText = this.formatCampaignDetailText(c);
+      const itemEl = document.createElement('div');
+      itemEl.style.cssText = 'display: flex; gap: 0.85rem; padding: 0.85rem 1rem; background: #ffffff; border-radius: 10px; border: 1px solid #cbd5e1; box-shadow: 0 1px 3px rgba(0,0,0,0.05); align-items: flex-start;';
+
+      itemEl.innerHTML = `
+        <div style="width: 12px; height: 12px; border-radius: 50%; background-color: ${c.color || '#eab308'}; flex-shrink: 0; margin-top: 0.25rem;"></div>
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+            <h4 style="margin: 0; font-size: 0.95rem; font-weight: 800; color: #0f172a;">${c.title}</h4>
+            <span style="font-size: 0.72rem; font-weight: 700; padding: 0.15rem 0.5rem; border-radius: 12px; background: rgba(234, 179, 8, 0.12); color: #b45309;">Ativa</span>
+          </div>
+          <p style="margin: 0.35rem 0 0 0; font-size: 0.83rem; color: #475569; font-weight: 500; line-height: 1.4;">
+            ${detailText}
+          </p>
+        </div>
+      `;
+
+      container.appendChild(itemEl);
+    });
+
+    if (window.lucide) window.lucide.createIcons();
   }
 
   openCampaignsModal() {
