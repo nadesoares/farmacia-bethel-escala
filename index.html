@@ -2060,12 +2060,19 @@ class CalendarManager {
       const allCampaigns = this.store.getCampaigns();
       const activeCampaigns = this.getCampaignStatusForDate(dateKey, allCampaigns);
       activeCampaigns.forEach(({ campaign, isActive, isRadarAlert }) => {
+        if (!isActive) return;
+
         const campBadge = document.createElement('span');
         campBadge.className = `action-badge-tag ${isRadarAlert ? 'pulse-radar-alert' : ''}`;
         campBadge.style.backgroundColor = campaign.color || '#eab308';
         campBadge.title = `Ação: ${campaign.title}`;
         campBadge.innerHTML = `<i data-lucide="target" style="width: 10px; height: 10px;"></i> <span>${campaign.title}</span>`;
         dayHeaderGroup.appendChild(campBadge);
+
+        if (isRadarAlert) {
+          dayCell.classList.add('pulse-upcoming-day-box');
+          dayCell.style.setProperty('--campaign-color', campaign.color || '#eab308');
+        }
       });
 
       topbarEl.appendChild(dayHeaderGroup);
@@ -2491,75 +2498,59 @@ class CalendarManager {
   getCampaignStatusForDate(dateKey, campaigns) {
     if (!campaigns || !Array.isArray(campaigns)) return [];
     const targetDate = new Date(dateKey + 'T00:00:00');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     const matches = [];
 
     campaigns.forEach(camp => {
       if (!camp.startDate) return;
       const startDate = new Date(camp.startDate + 'T00:00:00');
-      const endDate = camp.endDate ? new Date(camp.endDate + 'T00:00:00') : new Date(startDate);
+      const endDate = camp.endDate ? new Date(camp.endDate + 'T00:00:00') : new Date(2099, 11, 31);
+
+      if (targetDate < startDate || targetDate > endDate) return;
 
       let isActive = false;
-      let isRadarAlert = false;
 
-      const diffMs = startDate.getTime() - targetDate.getTime();
-      const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-      const isUpcoming3Days = (diffDays > 0 && diffDays <= 3);
+      const tYear = targetDate.getFullYear();
+      const tMonth = targetDate.getMonth();
+      const tDate = targetDate.getDate();
+      const tDay = targetDate.getDay();
+
+      const sMonth = startDate.getMonth();
+      const sDate = startDate.getDate();
+      const sDay = startDate.getDay();
 
       if (camp.recurrenceType === 'CUSTOM_RANGE') {
-        if (targetDate >= startDate && targetDate <= endDate) {
-          isActive = true;
-          isRadarAlert = true;
-        } else if (isUpcoming3Days) {
-          isRadarAlert = true;
-        }
+        isActive = true;
       } else if (camp.recurrenceType === 'WEEKLY') {
-        if (targetDate >= startDate && targetDate.getDay() === startDate.getDay()) {
-          isActive = true;
-          isRadarAlert = true;
-        } else if (isUpcoming3Days) {
-          isRadarAlert = true;
-        }
+        isActive = (tDay === sDay);
       } else if (camp.recurrenceType === 'WEEKDAYS_SPECIFIC') {
-        const dow = targetDate.getDay();
-        if (targetDate >= startDate && dow >= 1 && dow <= 5) {
-          isActive = true;
-          isRadarAlert = true;
-        } else if (isUpcoming3Days) {
-          isRadarAlert = true;
+        const dayMap = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+        const dayStr = dayMap[tDay];
+        if (camp.specificDays && Array.isArray(camp.specificDays) && camp.specificDays.length > 0) {
+          isActive = camp.specificDays.includes(dayStr);
+        } else {
+          isActive = (tDay >= 1 && tDay <= 5);
         }
       } else if (camp.recurrenceType === 'WEEKEND') {
-        const dow = targetDate.getDay();
-        if (targetDate >= startDate && (dow === 0 || dow === 6)) {
-          isActive = true;
-          isRadarAlert = true;
-        } else if (isUpcoming3Days) {
-          isRadarAlert = true;
-        }
+        isActive = (tDay === 0 || tDay === 6);
       } else if (camp.recurrenceType === 'MONTHLY_DAY') {
-        if (targetDate >= startDate && targetDate.getDate() === startDate.getDate()) {
-          isActive = true;
-          isRadarAlert = true;
-        } else if (isUpcoming3Days) {
-          isRadarAlert = true;
-        }
+        isActive = (tDate === sDate);
       } else if (camp.recurrenceType === 'MONTHLY_WEEKDAY') {
-        if (targetDate >= startDate && targetDate.getDay() === startDate.getDay() && targetDate.getDate() <= 7) {
-          isActive = true;
-          isRadarAlert = true;
-        } else if (isUpcoming3Days) {
-          isRadarAlert = true;
-        }
+        const sWeekNum = Math.ceil(sDate / 7);
+        const tWeekNum = Math.ceil(tDate / 7);
+        isActive = (tDay === sDay && tWeekNum === sWeekNum);
       } else if (camp.recurrenceType === 'ANNUAL') {
-        if (targetDate.getMonth() === startDate.getMonth() && targetDate.getDate() === startDate.getDate()) {
-          isActive = true;
-          isRadarAlert = true;
-        } else if (isUpcoming3Days) {
-          isRadarAlert = true;
-        }
+        isActive = (tMonth === sMonth && tDate === sDate);
       }
 
-      if (isActive || isRadarAlert) {
-        matches.push({ campaign: camp, isActive, isRadarAlert });
+      if (isActive) {
+        const diffMs = targetDate.getTime() - today.getTime();
+        const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+        const isRadarAlert = (diffDays >= 0 && diffDays <= 3);
+
+        matches.push({ campaign: camp, isActive: true, isRadarAlert });
       }
     });
 

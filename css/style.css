@@ -1471,9 +1471,27 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   white-space: nowrap;
 }
 
-/* Animação do Radar Piscante (3 dias antes e durante a campanha) */
+/* Animação do Radar Piscante */
 .pulse-radar-alert {
   animation: pulse-radar 1.4s infinite ease-in-out;
+}
+
+/* Animação para fazer a caixinha (célula inteira do dia) piscar quando faltar 3 dias */
+.pulse-upcoming-day-box {
+  animation: pulse-day-box 1.6s infinite ease-in-out !important;
+  border: 2px solid var(--campaign-color, #eab308) !important;
+  z-index: 5 !important;
+}
+
+@keyframes pulse-day-box {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4);
+    border-color: var(--campaign-color, #eab308);
+  }
+  50% {
+    box-shadow: 0 0 16px 4px rgba(234, 179, 8, 0.75);
+    border-color: var(--campaign-color, #eab308);
+  }
 }
 
 @keyframes pulse-radar {
