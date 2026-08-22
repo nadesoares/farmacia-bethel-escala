@@ -103,7 +103,7 @@ class CalendarManager {
     });
 
     document.getElementById('btn-auto-generate')?.addEventListener('click', () => {
-      this.generateAndSaveCurrentMonth();
+      this.openMonthTeamModal();
     });
 
     // Botão Equipe do Mês
@@ -1338,8 +1338,7 @@ class CalendarManager {
     const yearMonthKey = this.getYearMonthKey();
     this.store.setMonthSelectedEmployeeIds(yearMonthKey, checkedIds);
     window.app?.closeModal('modal-month-team');
-    this.render();
-    window.app?.showToast(`Equipe de ${MONTH_NAMES[this.currentMonth - 1]}/${this.currentYear} atualizada (${checkedIds.length} colaboradores)! Clique em 'Gerar Escala' para gerar.`, 'success');
+    this.generateAndSaveCurrentMonth();
   }
 
   copyDaySchedule(dateKey, e) {

@@ -62,39 +62,7 @@
         </div>
       </div>
 
-      <!-- GRUPO CENTRO: BLOCO DE FILTROS AGRUPADO (EQUIPE DO MÊS) -->
-      <div class="topbar-center-group">
-        <div class="topbar-block block-filters filter-wrapper" style="position: relative;">
-          <button id="btn-month-team-group" class="btn btn-secondary-pill" title="Equipe do Mês">
-            <i data-lucide="users"></i>
-            <span>Equipe do Mês</span>
-            <i data-lucide="chevron-down" class="icon-sm"></i>
-          </button>
 
-          <div id="month-team-dropdown" class="dropdown-menu month-team-dropdown hidden" style="position: absolute; top: calc(100% + 0.35rem); left: 50%; transform: translateX(-50%); min-width: 220px; z-index: 50;">
-            <!-- 👥 Visualizar Todos / Filtrar Funcionário -->
-            <div class="dropdown-section">
-              <div class="dropdown-section-title" style="padding: 0.4rem 0.75rem 0.2rem 0.75rem; font-size: 0.72rem; color: #64748b; font-weight: 700; text-transform: uppercase; display: flex; align-items: center; gap: 0.35rem;">
-                <i data-lucide="filter" style="width: 12px; height: 12px;"></i>
-                <span>Filtrar Visualização</span>
-              </div>
-              <div style="padding: 0.25rem 0.75rem 0.5rem 0.75rem;">
-                <select id="filter-employee" class="select-clean" style="width: 100%; border: 1px solid #cbd5e1; padding: 0.35rem 0.5rem; border-radius: 6px; font-size: 0.82rem; background: #ffffff;">
-                  <option value="ALL">Visualizar Todos</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="dropdown-divider" style="height: 1px; background: #e2e8f0; margin: 0.25rem 0;"></div>
-
-            <!-- 👤 Equipe ativa (Abrir Modal de Seleção de Colaboradores do Mês) -->
-            <button id="btn-month-team" class="dropdown-item admin-only hidden" style="display: flex; align-items: center; gap: 0.5rem; width: 100%; padding: 0.55rem 0.75rem; border: none; background: transparent; cursor: pointer; text-align: left; font-size: 0.85rem; font-weight: 600; color: #0f172a;">
-              <i data-lucide="user-check" style="width: 15px; height: 15px; color: #10b981;"></i>
-              <span>Equipe ativa</span>
-            </button>
-          </div>
-        </div>
-      </div>
 
       <!-- GRUPO DIREITO: AÇÕES DE ADMIN E BOTÃO ADMIN -->
       <div class="topbar-right-group">
@@ -281,8 +249,8 @@
             <i data-lucide="user-check"></i>
           </div>
           <div>
-            <h3 id="month-team-modal-title">Equipe do Mês</h3>
-            <span class="text-xs text-muted">Marque quem vai trabalhar na escala deste mês (desmarque quem estiver de férias ou licença)</span>
+            <h3 id="month-team-modal-title">Seleção da Equipe & Gerar Escala</h3>
+            <span class="text-xs text-muted">Marque quem vai trabalhar na escala deste mês e clique em 'Gerar Escala'</span>
           </div>
         </div>
         <button class="btn-close-modal" data-modal="modal-month-team"><i data-lucide="x"></i></button>
@@ -306,7 +274,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-ghost" data-modal="modal-month-team">Cancelar</button>
         <button type="button" id="btn-save-month-team" class="btn btn-emerald">
-          <i data-lucide="check"></i> Salvar Equipe do Mês
+          <i data-lucide="sparkles"></i> Gerar Escala
         </button>
       </div>
     </div>
@@ -1794,7 +1762,7 @@ class CalendarManager {
     });
 
     document.getElementById('btn-auto-generate')?.addEventListener('click', () => {
-      this.generateAndSaveCurrentMonth();
+      this.openMonthTeamModal();
     });
 
     document.getElementById('btn-clear-month')?.addEventListener('click', () => {
@@ -2875,8 +2843,7 @@ class CalendarManager {
     const yearMonthKey = this.getYearMonthKey();
     this.store.setMonthSelectedEmployeeIds(yearMonthKey, checkedIds);
     window.app?.closeModal('modal-month-team');
-    this.render();
-    window.app?.showToast(`Equipe de ${MONTH_NAMES[this.currentMonth - 1]}/${this.currentYear} atualizada (${checkedIds.length} colaboradores)! Clique em 'Gerar Escala' para gerar.`, 'success');
+    this.generateAndSaveCurrentMonth();
   }
 
   copyDaySchedule(dateKey, e) {
