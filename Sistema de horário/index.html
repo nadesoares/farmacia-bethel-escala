@@ -1598,6 +1598,9 @@ class PharmacyScheduler {
         }
       });
 
+      // Aplicação Universal de Preferências de Turno (NIGHT_WEEKDAY, SHIFT_1, SHIFT_2, SHIFT_3)
+      this.enforceShiftPreferences(slots, dayOfWeek, day, fridayOffMap, empsList);
+
       daysSchedule[dayKey] = {
         dayNumber: day,
         dayOfWeek: dayOfWeek,
@@ -1613,6 +1616,71 @@ class PharmacyScheduler {
       generatedAt: new Date().toISOString(),
       days: daysSchedule
     };
+  }
+
+  enforceShiftPreferences(slots, dayOfWeek, day, fridayOffMap, empsList) {
+    if (!empsList || empsList.length === 0) return;
+
+    empsList.forEach(emp => {
+      if (!emp || !emp.prefShift || emp.prefShift === 'NONE' || emp.prefShift === 'PLANTONISTA') return;
+
+      const empName = (emp.name || '').trim().toUpperCase();
+
+      let currentSlotIdx = -1;
+      let workerObj = null;
+
+      for (let s = 0; s < 3; s++) {
+        const foundIdx = slots[s].findIndex(w => (w.employeeName || '').trim().toUpperCase() === empName);
+        if (foundIdx !== -1) {
+          currentSlotIdx = s;
+          workerObj = slots[s][foundIdx];
+          break;
+        }
+      }
+
+      if (currentSlotIdx === -1) return;
+
+      let targetSlotIdx = -1;
+
+      if (emp.prefShift === 'NIGHT_WEEKDAY') {
+        if (dayOfWeek >= 1 && dayOfWeek <= 4) {
+          targetSlotIdx = 2; // 3º Turno (Noite) de Seg a Qui
+        } else if (dayOfWeek === 5) {
+          const isGreen = (workerObj.color === 'GREEN' || (fridayOffMap[day] && fridayOffMap[day].has(empName)));
+          targetSlotIdx = isGreen ? 1 : 0; // 1º Turno (Manhã Sexta) ou 2º Turno se folga verde
+        }
+      } else if (emp.prefShift === 'SHIFT_1') {
+        targetSlotIdx = 0; // 1º Turno (Manhã)
+      } else if (emp.prefShift === 'SHIFT_2') {
+        targetSlotIdx = 1; // 2º Turno (Intermediário)
+      } else if (emp.prefShift === 'SHIFT_3') {
+        targetSlotIdx = 2; // 3º Turno (Noite)
+      }
+
+      if (targetSlotIdx !== -1 && targetSlotIdx !== currentSlotIdx) {
+        const idxInCurrent = slots[currentSlotIdx].findIndex(w => (w.employeeName || '').trim().toUpperCase() === empName);
+        if (idxInCurrent !== -1) {
+          slots[currentSlotIdx].splice(idxInCurrent, 1);
+        }
+
+        let swapped = false;
+        for (let i = 0; i < slots[targetSlotIdx].length; i++) {
+          const targetWorker = slots[targetSlotIdx][i];
+          const targetEmp = empsList.find(e => (e.name || '').trim().toUpperCase() === (targetWorker.employeeName || '').trim().toUpperCase());
+          if (!targetEmp || targetEmp.prefShift === 'NONE') {
+            const [movedTarget] = slots[targetSlotIdx].splice(i, 1);
+            slots[currentSlotIdx].push(movedTarget);
+            slots[targetSlotIdx].push(workerObj);
+            swapped = true;
+            break;
+          }
+        }
+
+        if (!swapped) {
+          slots[targetSlotIdx].push(workerObj);
+        }
+      }
+    });
   }
 }
 
