@@ -80,6 +80,7 @@ class CalendarManager {
 
   init() {
     this.bindEvents();
+    this.startRealtimeClock();
     this.render();
     setTimeout(() => {
       const todayCell = document.querySelector('.calendar-day-cell.is-today');
@@ -87,6 +88,22 @@ class CalendarManager {
         todayCell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
     }, 150);
+  }
+
+  startRealtimeClock() {
+    const updateClock = () => {
+      const clockTextEl = document.getElementById('realtime-clock-text');
+      if (!clockTextEl) return;
+      const now = new Date();
+      const dayNameMap = ['DOM', 'SEG', 'TER', 'QUA', 'QUI', 'SEX', 'SÁB'];
+      const dayName = dayNameMap[now.getDay()];
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      clockTextEl.textContent = `${dayName}, ${hours}:${minutes}:${seconds}`;
+    };
+    updateClock();
+    setInterval(updateClock, 1000);
   }
 
   bindEvents() {
@@ -266,6 +283,13 @@ class CalendarManager {
     
     const pickerEl = document.getElementById('month-picker');
     if (pickerEl) pickerEl.value = yearMonthKey;
+
+    const btnToday = document.getElementById('btn-today');
+    if (btnToday) {
+      const now = new Date();
+      const isCurrentMonthYear = (this.currentYear === now.getFullYear() && this.currentMonth === (now.getMonth() + 1));
+      btnToday.classList.toggle('btn-today-pulse', !isCurrentMonthYear);
+    }
 
     let schedule = this.store.getMonthSchedule(yearMonthKey);
     if (!schedule) {

@@ -1547,6 +1547,46 @@ body.is-admin .calendar-day-cell.has-copied-active .day-cell-actions {
   }
 }
 
+/* RELÓGIO DIGITAL EM TEMPO REAL */
+.realtime-clock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.38rem 0.75rem;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-pill);
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #0f172a;
+  font-family: monospace, inherit;
+  letter-spacing: 0.04em;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.realtime-clock-badge svg {
+  color: #0284c7;
+}
+
+/* DESTAQUE PULSANTE NO BOTÃO HOJE AO NAVEGAR EM OUTROS MESES */
+.btn-today-pulse {
+  animation: today-pulse-glow 1.5s infinite ease-in-out !important;
+  background: linear-gradient(135deg, #059669, #10b981) !important;
+  color: #ffffff !important;
+  border-color: #047857 !important;
+}
+
+@keyframes today-pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 14px 4px rgba(16, 185, 129, 0.85);
+    transform: scale(1.05);
+  }
+}
+
 /* Presets de Cores no Form */
 .weekday-select-chip {
   padding: 0.35rem 0.75rem;
