@@ -443,9 +443,22 @@ class CalendarManager {
       activeCampaigns.forEach(({ campaign, isActive, isRadarAlert }) => {
         if (!isActive) return;
 
+        const campColor = campaign.color || '#eab308';
+        const hexToRgba = (hex, alpha) => {
+          let c = (hex || '#eab308').replace('#', '');
+          if (c.length === 3) c = c.split('').map(x => x + x).join('');
+          const num = parseInt(c, 16);
+          return `rgba(${(num >> 16) & 255}, ${(num >> 8) & 255}, ${num & 255}, ${alpha})`;
+        };
+
         const campBadge = document.createElement('span');
         campBadge.className = `action-badge-tag ${isRadarAlert ? 'pulse-radar-alert' : ''}`;
-        campBadge.style.backgroundColor = campaign.color || '#eab308';
+        campBadge.style.backgroundColor = campColor;
+        if (isRadarAlert) {
+          campBadge.style.setProperty('--badge-glow-start', hexToRgba(campColor, 0.7));
+          campBadge.style.setProperty('--badge-glow-peak', hexToRgba(campColor, 0.85));
+          campBadge.style.setProperty('--badge-glow-end', hexToRgba(campColor, 0));
+        }
         campBadge.title = `Ação: ${campaign.title}`;
         campBadge.innerHTML = `<i data-lucide="target" style="width: 10px; height: 10px;"></i> <span>${campaign.title}</span>`;
         dayHeaderGroup.appendChild(campBadge);
