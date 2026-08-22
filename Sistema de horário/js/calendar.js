@@ -1319,7 +1319,6 @@ class CalendarManager {
           });
         }
       });
-      });
 
       row.querySelector('.btn-del-camp')?.addEventListener('click', () => {
         if (confirm(`Deseja excluir a ação "${c.title}"?`)) {
