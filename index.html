@@ -247,7 +247,7 @@
   </div>
 
   <!-- MODAL: SELEÇÃO DA EQUIPE DO MÊS -->
-  <div id="modal-month-team" class="modal-overlay hidden">
+  <div id="modal-month-team" class="modal-overlay hidden" data-no-backdrop-close="true">
     <div class="modal-box modern-modal" style="max-width: 540px;">
       <div class="modal-header">
         <div class="modal-title-group">
@@ -287,7 +287,7 @@
   </div>
 
   <!-- MODAL: GESTÃO / CADASTRO DE FUNCIONÁRIOS (ADMIN) -->
-  <div id="modal-team-manager" class="modal-overlay hidden">
+  <div id="modal-team-manager" class="modal-overlay hidden" data-no-backdrop-close="true">
     <div class="modal-box modern-modal" style="max-width: 620px;">
       <div class="modal-header">
         <div class="modal-title-group">
@@ -485,14 +485,17 @@
         </div>
 
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.75rem; color: #64748b; display: flex; align-items: center; gap: 0.3rem;">
+          <i data-lucide="info" style="width: 13px; height: 13px; color: #0284c7;"></i> Lembre-se de salvar suas alterações antes de fechar.
+        </span>
         <button type="button" class="btn btn-ghost" data-modal="modal-campaigns">Fechar</button>
       </div>
     </div>
   </div>
 
   <!-- MODAL: CADASTRO / EDIÇÃO DE FUNCIONÁRIO (COM ESCOLHA DE TURNO) -->
-  <div id="modal-employee" class="modal-overlay hidden">
+  <div id="modal-employee" class="modal-overlay hidden" data-no-backdrop-close="true">
     <div class="modal-box modern-modal">
       <div class="modal-header">
         <div class="modal-title-group">
@@ -579,7 +582,7 @@
   </div>
 
   <!-- MODAL: EDIÇÃO DE DIA (EXATAMENTE 3 TURNOS COM SUPORTE A MÚLTIPLAS PESSOAS) -->
-  <div id="modal-edit-slot" class="modal-overlay hidden">
+  <div id="modal-edit-slot" class="modal-overlay hidden" data-no-backdrop-close="true">
     <div class="modal-box modern-modal" style="max-width: 540px;">
       <div class="modal-header">
         <div class="modal-title-group">
@@ -638,8 +641,10 @@
         </div>
       </form>
     </div>
+  </div>
+
   <!-- MODAL DE CONFIGURAÇÃO DO SUPABASE CLOUD -->
-  <div id="modal-supabase-config" class="modal-overlay hidden">
+  <div id="modal-supabase-config" class="modal-overlay hidden" data-no-backdrop-close="true">
     <div class="modal-box modern-modal" style="max-width: 520px;">
       <div class="modal-header">
         <div class="modal-title-group">
