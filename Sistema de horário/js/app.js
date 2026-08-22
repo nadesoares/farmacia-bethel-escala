@@ -35,6 +35,7 @@ class App {
     if (btnTeam) {
       btnTeam.addEventListener('click', (e) => {
         e.preventDefault();
+        document.getElementById('more-actions-dropdown')?.classList.add('hidden');
         window.employeeManager?.render();
         this.openModal('modal-team-manager');
       });
@@ -80,6 +81,9 @@ class App {
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
       overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
+          if (overlay.dataset.noBackdropClose === 'true' || overlay.id === 'modal-campaigns') {
+            return;
+          }
           overlay.classList.add('hidden');
         }
       });

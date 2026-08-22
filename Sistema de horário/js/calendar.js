@@ -1196,6 +1196,7 @@ class CalendarManager {
         this.resetCampaignForm();
         this.renderCampaignsList();
         this.render();
+        window.app?.closeModal('modal-campaigns');
         window.app?.showToast(`🎯 Ação "${title}" salva com sucesso!`, 'success');
       });
     }

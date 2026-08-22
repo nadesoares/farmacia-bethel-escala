@@ -81,6 +81,9 @@ class App {
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
       overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
+          if (overlay.dataset.noBackdropClose === 'true' || overlay.id === 'modal-campaigns') {
+            return;
+          }
           overlay.classList.add('hidden');
         }
       });

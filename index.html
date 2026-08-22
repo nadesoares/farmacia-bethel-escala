@@ -315,7 +315,7 @@
   </div>
 
   <!-- MODAL: GESTÃO DE AÇÕES E CAMPANHAS NA FARMÁCIA (ADMIN) -->
-  <div id="modal-campaigns" class="modal-overlay hidden">
+  <div id="modal-campaigns" class="modal-overlay hidden" data-no-backdrop-close="true">
     <div class="modal-box modern-modal" style="max-width: 650px;">
       <div class="modal-header">
         <div class="modal-title-group">
@@ -2755,6 +2755,7 @@ class CalendarManager {
         this.resetCampaignForm();
         this.renderCampaignsList();
         this.render();
+        window.app?.closeModal('modal-campaigns');
         window.app?.showToast(`🎯 Ação "${title}" salva com sucesso!`, 'success');
       });
     }
