@@ -2025,6 +2025,17 @@ class CalendarManager {
       }
     });
 
+    // Botão Relatório de Fins de Semana e Folgas
+    document.getElementById('btn-open-weekend-report')?.addEventListener('click', () => {
+      this.openWeekendReport();
+    });
+    document.getElementById('btn-dropdown-weekend-report')?.addEventListener('click', () => {
+      this.openWeekendReport();
+    });
+    document.getElementById('btn-print-weekend-report')?.addEventListener('click', () => {
+      window.print();
+    });
+
     document.getElementById('filter-employee')?.addEventListener('change', (e) => {
       this.highlightEmployee(e.target.value);
     });
@@ -2037,18 +2048,6 @@ class CalendarManager {
     // Botão Salvar Equipe do Mês
     document.getElementById('btn-save-month-team')?.addEventListener('click', () => {
       this.saveMonthTeam();
-    });
-
-    document.getElementById('btn-open-weekend-report')?.addEventListener('click', () => {
-      this.openWeekendReport();
-    });
-
-    document.getElementById('btn-dropdown-weekend-report')?.addEventListener('click', () => {
-      this.openWeekendReport();
-    });
-
-    document.getElementById('btn-print-weekend-report')?.addEventListener('click', () => {
-      window.print();
     });
 
     document.getElementById('btn-dropdown-consolidated-today')?.addEventListener('click', () => {
@@ -2071,6 +2070,72 @@ class CalendarManager {
         window.app?.openModal('modal-team-manager');
       });
     }
+
+    document.getElementById('btn-clear-month')?.addEventListener('click', () => {
+      if (confirm(`Deseja realmente limpar toda a escala de ${MONTH_NAMES[this.currentMonth - 1]} / ${this.currentYear}?`)) {
+        const yearMonthKey = `${this.currentYear}-${String(this.currentMonth).padStart(2, '0')}`;
+        this.store.deleteMonthSchedule(yearMonthKey);
+        this.render();
+        window.app?.showToast('Escala do mês limpa!', 'info');
+      }
+    });
+
+    document.getElementById('form-edit-slot')?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      this.saveSlotEdit();
+    });
+
+    // Botão Limpar Dia
+    document.getElementById('btn-clear-day-slots')?.addEventListener('click', () => {
+      const dateKey = document.getElementById('edit-slot-date')?.value;
+      if (dateKey) this.clearDaySlots(dateKey);
+    });
+
+    document.querySelectorAll('.btn-add-person-shift').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const shiftNum = parseInt(btn.dataset.shift, 10);
+        this.appendPersonToShift(shiftNum, '', 'NORMAL');
+      });
+    });
+
+    // Botões de Copiar e Colar na barra flutuante
+    document.getElementById('btn-paste-current-week')?.addEventListener('click', () => {
+      this.pasteToWeekdaysOfWeek();
+    });
+
+    document.getElementById('btn-paste-all-weekdays')?.addEventListener('click', () => {
+      this.pasteToAllWeekdaysOfMonth();
+    });
+
+    document.getElementById('btn-cancel-copy')?.addEventListener('click', () => {
+      this.cancelCopy();
+    });
+
+    // Botões de Copiar e Colar no Modal de Edição do Dia
+    document.getElementById('btn-modal-copy-day')?.addEventListener('click', () => {
+      const dateKey = document.getElementById('edit-slot-date')?.value;
+      if (dateKey) this.copyDaySchedule(dateKey);
+    });
+
+    document.getElementById('btn-modal-paste-day')?.addEventListener('click', () => {
+      if (!this.copiedDayData || !this.copiedDayData.slots) {
+        window.app?.showToast('Nenhum horário copiado.', 'warning');
+        return;
+      }
+      for (let shiftNum = 1; shiftNum <= 3; shiftNum++) {
+        const container = document.getElementById(`shift-${shiftNum}-workers`);
+        if (container) container.innerHTML = '';
+        const workers = this.copiedDayData.slots[shiftNum - 1] || [];
+        if (workers.length === 0) {
+          this.appendPersonToShift(shiftNum, '', 'NORMAL');
+        } else {
+          workers.forEach(w => {
+            this.appendPersonToShift(shiftNum, w.employeeName, w.color || 'NORMAL');
+          });
+        }
+      }
+      window.app?.showToast(`Horário do dia ${String(this.copiedDayData.dayNumber).padStart(2, '0')} carregado!`, 'info');
+    });
   }
 
   openWeekendReport() {
@@ -2123,74 +2188,80 @@ class CalendarManager {
           });
         }
 
-        workersInDay.forEach(name => {
-          stats[name].totalDaysWorked++;
-          if (dayOfWeek === 6) {
-            stats[name].saturdays++;
-            stats[name].weekendsTotal++;
-          } else if (dayOfWeek === 0) {
-            stats[name].sundays++;
-            stats[name].weekendsTotal++;
-          }
-        });
+        if (dayOfWeek === 6) {
+          workersInDay.forEach(name => {
+            if (stats[name]) {
+              stats[name].saturdays++;
+              stats[name].weekendsTotal++;
+            }
+          });
+        } else if (dayOfWeek === 0) {
+          workersInDay.forEach(name => {
+            if (stats[name]) {
+              stats[name].sundays++;
+              stats[name].weekendsTotal++;
+            }
+          });
+        }
 
-        fridayOffWorkers.forEach(name => {
-          stats[name].fridayOffs++;
+        if (dayOfWeek === 5) {
+          fridayOffWorkers.forEach(name => {
+            if (stats[name]) {
+              stats[name].fridayOffs++;
+            }
+          });
+        }
+
+        workersInDay.forEach(name => {
+          if (stats[name]) {
+            stats[name].totalDaysWorked++;
+          }
         });
       }
     }
 
-    // Render Metrics Cards
-    const metricsGrid = document.getElementById('weekend-report-metrics-grid');
-    if (metricsGrid) {
-      let totalWeekendsAll = 0;
-      let totalFridayOffsAll = 0;
-      Object.values(stats).forEach(s => {
-        totalWeekendsAll += s.weekendsTotal;
-        totalFridayOffsAll += s.fridayOffs;
+    const grid = document.getElementById('weekend-report-metrics-grid');
+    if (grid) {
+      let totalWeekendDuties = 0;
+      let totalFridayOffs = 0;
+      Object.values(stats).forEach(st => {
+        totalWeekendDuties += st.weekendsTotal;
+        totalFridayOffs += st.fridayOffs;
       });
 
-      metricsGrid.innerHTML = `
-        <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 0.75rem; text-align: center;">
-          <div style="font-size: 0.72rem; color: #0369a1; text-transform: uppercase; font-weight: 700;">Mês Ativo</div>
-          <div style="font-size: 1.1rem; font-weight: 800; color: #0284c7; margin-top: 0.2rem;">${MONTH_NAMES[this.currentMonth - 1]}</div>
+      grid.innerHTML = `
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 0.65rem 0.85rem; text-align: center;">
+          <span style="font-size: 0.7rem; font-weight: 700; color: #64748b; text-transform: uppercase;">Mês</span>
+          <div style="font-size: 1rem; font-weight: 800; color: #0f172a;">${MONTH_NAMES[this.currentMonth - 1]}</div>
         </div>
-        <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 0.75rem; text-align: center;">
-          <div style="font-size: 0.72rem; color: #be123c; text-transform: uppercase; font-weight: 700;">Plantões FDS</div>
-          <div style="font-size: 1.1rem; font-weight: 800; color: #e11d48; margin-top: 0.2rem;">${totalWeekendsAll} plantões</div>
+        <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 0.65rem 0.85rem; text-align: center;">
+          <span style="font-size: 0.7rem; font-weight: 700; color: #e11d48; text-transform: uppercase;">Plantões FDS</span>
+          <div style="font-size: 1.1rem; font-weight: 900; color: #be123c;">${totalWeekendDuties}</div>
         </div>
-        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 0.75rem; text-align: center;">
-          <div style="font-size: 0.72rem; color: #047857; text-transform: uppercase; font-weight: 700;">Folgas Sexta</div>
-          <div style="font-size: 1.1rem; font-weight: 800; color: #059669; margin-top: 0.2rem;">${totalFridayOffsAll} folgas</div>
+        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 0.65rem 0.85rem; text-align: center;">
+          <span style="font-size: 0.7rem; font-weight: 700; color: #059669; text-transform: uppercase;">Folgas Sexta</span>
+          <div style="font-size: 1.1rem; font-weight: 900; color: #047857;">${totalFridayOffs}</div>
         </div>
-        <div style="background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 8px; padding: 0.75rem; text-align: center;">
-          <div style="font-size: 0.72rem; color: #6d28d9; text-transform: uppercase; font-weight: 700;">Equipe L1</div>
-          <div style="font-size: 1.1rem; font-weight: 800; color: #7c3aed; margin-top: 0.2rem;">${employees.length} membros</div>
+        <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 0.65rem 0.85rem; text-align: center;">
+          <span style="font-size: 0.7rem; font-weight: 700; color: #0284c7; text-transform: uppercase;">Colaboradores</span>
+          <div style="font-size: 1.1rem; font-weight: 900; color: #0369a1;">${employees.length}</div>
         </div>
       `;
     }
 
-    // Render Table
     const tbody = document.getElementById('weekend-report-tbody');
     if (tbody) {
       tbody.innerHTML = '';
-      Object.values(stats).forEach(st => {
-        const emp = st.emp;
-        const color = emp.color || '#0284c7';
-        const isPlantonista = emp.prefShift === 'PLANTONISTA';
-        const roleBadge = isPlantonista ? '<span style="font-size: 0.68rem; background: #ffedd5; color: #c2410c; padding: 2px 6px; border-radius: 4px; font-weight: 700;">Plantonista</span>' : '<span style="font-size: 0.68rem; background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Balconista</span>';
+      const statsList = Object.values(stats);
+      statsList.sort((a, b) => b.weekendsTotal - a.weekendsTotal);
 
+      statsList.forEach((st, idx) => {
         const tr = document.createElement('tr');
         tr.style.borderBottom = '1px solid #e2e8f0';
+        tr.style.background = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
         tr.innerHTML = `
-          <td style="padding: 0.65rem 0.85rem;">
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-              <span style="width: 10px; height: 10px; border-radius: 50%; background: ${color}; display: inline-block;"></span>
-              <div>
-                <strong style="color: #0f172a; font-size: 0.85rem;">${emp.name}</strong>
-                <div style="margin-top: 2px;">${roleBadge}</div>
-              </div>
-            </div>
+          <td style="padding: 0.65rem 0.85rem; font-weight: 800; color: #0f172a;">
+            <span class="worker-chip color-normal" style="font-size: 0.76rem; padding: 2px 7px;">${st.emp.name}</span>
           </td>
           <td style="padding: 0.65rem 0.65rem; text-align: center; font-weight: 700; color: #e11d48;">${st.saturdays}</td>
           <td style="padding: 0.65rem 0.65rem; text-align: center; font-weight: 700; color: #be123c;">${st.sundays}</td>
@@ -2337,73 +2408,6 @@ class CalendarManager {
 
     const encoded = encodeURIComponent(message);
     window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
-  }
-
-    document.getElementById('btn-clear-month')?.addEventListener('click', () => {
-      if (confirm(`Deseja realmente limpar toda a escala de ${MONTH_NAMES[this.currentMonth - 1]} / ${this.currentYear}?`)) {
-        const yearMonthKey = `${this.currentYear}-${String(this.currentMonth).padStart(2, '0')}`;
-        this.store.deleteMonthSchedule(yearMonthKey);
-        this.render();
-        window.app?.showToast('Escala do mês limpa!', 'info');
-      }
-    });
-
-    document.getElementById('form-edit-slot')?.addEventListener('submit', (e) => {
-      e.preventDefault();
-      this.saveSlotEdit();
-    });
-
-    // Botão Limpar Dia
-    document.getElementById('btn-clear-day-slots')?.addEventListener('click', () => {
-      const dateKey = document.getElementById('edit-slot-date')?.value;
-      if (dateKey) this.clearDaySlots(dateKey);
-    });
-
-    document.querySelectorAll('.btn-add-person-shift').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const shiftNum = parseInt(btn.dataset.shift, 10);
-        this.appendPersonToShift(shiftNum, '', 'NORMAL');
-      });
-    });
-
-    // Botões de Copiar e Colar na barra flutuante
-    document.getElementById('btn-paste-current-week')?.addEventListener('click', () => {
-      this.pasteToWeekdaysOfWeek();
-    });
-
-    document.getElementById('btn-paste-all-weekdays')?.addEventListener('click', () => {
-      this.pasteToAllWeekdaysOfMonth();
-    });
-
-    document.getElementById('btn-cancel-copy')?.addEventListener('click', () => {
-      this.cancelCopy();
-    });
-
-    // Botões de Copiar e Colar no Modal de Edição do Dia
-    document.getElementById('btn-modal-copy-day')?.addEventListener('click', () => {
-      const dateKey = document.getElementById('edit-slot-date')?.value;
-      if (dateKey) this.copyDaySchedule(dateKey);
-    });
-
-    document.getElementById('btn-modal-paste-day')?.addEventListener('click', () => {
-      if (!this.copiedDayData || !this.copiedDayData.slots) {
-        window.app?.showToast('Nenhum horário copiado.', 'warning');
-        return;
-      }
-      for (let shiftNum = 1; shiftNum <= 3; shiftNum++) {
-        const container = document.getElementById(`shift-${shiftNum}-workers`);
-        if (container) container.innerHTML = '';
-        const workers = this.copiedDayData.slots[shiftNum - 1] || [];
-        if (workers.length === 0) {
-          this.appendPersonToShift(shiftNum, '', 'NORMAL');
-        } else {
-          workers.forEach(w => {
-            this.appendPersonToShift(shiftNum, w.employeeName, w.color || 'NORMAL');
-          });
-        }
-      }
-      window.app?.showToast(`Horário do dia ${String(this.copiedDayData.dayNumber).padStart(2, '0')} carregado!`, 'info');
-    });
   }
 
   changeMonth(delta) {
