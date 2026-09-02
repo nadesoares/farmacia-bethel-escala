@@ -2315,6 +2315,7 @@ class CalendarManager {
       const shiftTitle = shiftNames[sIdx] || `Turno ${sIdx + 1}`;
 
       if (workers.length === 0) {
+        if (sIdx === 1) return; // Omitir 2º Turno quando vazio
         html += `
           <div style="background: rgba(0,0,0,0.02); padding: 0.4rem 0.6rem; border-radius: 6px; border: 1px dashed #cbd5e1;">
             <strong style="font-size: 0.76rem; color: #64748b;">${shiftTitle}:</strong>
@@ -2399,14 +2400,20 @@ class CalendarManager {
     if (dayData && dayData.slots) {
       const shiftLabels = ['1º Turno (Manhã)', '2º Turno (Intermediário)', '3º Turno (Noite)'];
       dayData.slots.forEach((s, idx) => {
-        const names = (s.workers || []).map(w => w.employeeName + (w.color === 'GREEN' ? ' (Folga)' : '')).join(', ');
-        l1Text += `  • *${shiftLabels[idx]}*: ${names || 'Sem escala'}\n`;
+        const workers = s.workers || [];
+        if (workers.length === 0) {
+          if (idx === 1) return; // Omitir 2º turno vazio no WhatsApp
+          l1Text += `  • *${shiftLabels[idx]}*: Sem escala\n`;
+        } else {
+          const names = workers.map(w => w.employeeName + (w.color === 'GREEN' ? ' (Folga)' : '')).join(' / ');
+          l1Text += `  • *${shiftLabels[idx]}*: ${names}\n`;
+        }
       });
     } else {
       l1Text = '  • Escala em aberto\n';
     }
 
-    const message = `*💊 FARMÁCIA BETHEL - ESCALA DE HOJE*\n📅 ${todayFormatted}\n\n*🏪 BETHEL LOJA 1:*\n${l1Text}\n*🏪 BETHEL LOJA 2:*\n  • *Manhã*: MATHEUS, SALETE\n  • *Noite*: LÍVIA, NATÁLIA\n\n_Acompanhe ao vivo em:_\nhttps://farmacia-bethel-escala.vercel.app`;
+    const message = `*💊 FARMÁCIA BETHEL - ESCALA DE HOJE*\n📅 ${todayFormatted}\n\n*🏪 BETHEL LOJA 1:*\n${l1Text}\n*🏪 BETHEL LOJA 2:*\n  • *Manhã*: MATHEUS / SALETE\n  • *Noite*: LÍVIA / NATÁLIA\n\n_Acompanhe ao vivo em:_\nhttps://farmacia-bethel-escala.vercel.app`;
 
     const encoded = encodeURIComponent(message);
     window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
