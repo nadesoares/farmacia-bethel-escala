@@ -152,13 +152,14 @@ class CalendarManager {
       window.print();
     });
 
-    document.getElementById('btn-public-today-shifts')?.addEventListener('click', () => {
-      this.openConsolidatedTodayModal();
-    });
-
     document.getElementById('btn-dropdown-consolidated-today')?.addEventListener('click', () => {
       document.getElementById('more-actions-dropdown')?.classList.add('hidden');
       this.openConsolidatedTodayModal();
+    });
+
+    document.getElementById('btn-dropdown-campaigns')?.addEventListener('click', () => {
+      document.getElementById('more-actions-dropdown')?.classList.add('hidden');
+      this.openCampaignsModal();
     });
 
     document.getElementById('btn-share-today-whatsapp')?.addEventListener('click', () => {
