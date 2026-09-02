@@ -70,6 +70,7 @@ class EmployeeManager {
     document.getElementById('employee-modal-title').textContent = 'Novo Colaborador';
     document.getElementById('employee-id').value = '';
     document.getElementById('employee-name').value = '';
+    document.getElementById('employee-birthday').value = '';
     document.getElementById('employee-pref-shift').value = 'NONE';
     document.getElementById('employee-color').value = '#10b981';
     document.getElementById('employee-color-preview').textContent = '#10b981';
@@ -81,7 +82,7 @@ class EmployeeManager {
     document.getElementById('plantao-day-fri').checked = false;
     document.getElementById('plantao-day-sat').checked = true;
     document.getElementById('plantao-day-sun').checked = false;
-    document.getElementById('plantao-shift-select').value = '1';
+    document.getElementById('plantao-shift-select').value = '2';
 
     window.app?.openModal('modal-employee');
   }
@@ -90,6 +91,7 @@ class EmployeeManager {
     document.getElementById('employee-modal-title').textContent = `Editar ${emp.name}`;
     document.getElementById('employee-id').value = emp.id;
     document.getElementById('employee-name').value = emp.name;
+    document.getElementById('employee-birthday').value = emp.birthday || '';
     document.getElementById('employee-pref-shift').value = emp.prefShift || 'NONE';
     document.getElementById('employee-color').value = emp.color || '#10b981';
     document.getElementById('employee-color-preview').textContent = emp.color || '#10b981';
@@ -102,7 +104,7 @@ class EmployeeManager {
       document.getElementById('plantao-day-fri').checked = days.includes('FRI');
       document.getElementById('plantao-day-sat').checked = days.includes('SAT');
       document.getElementById('plantao-day-sun').checked = days.includes('SUN');
-      document.getElementById('plantao-shift-select').value = emp.onCallShift || '1';
+      document.getElementById('plantao-shift-select').value = emp.onCallShift || emp.plantaoShift || '2';
     } else {
       plantonistaContainer?.classList.add('hidden');
     }
@@ -113,6 +115,7 @@ class EmployeeManager {
   saveEmployee() {
     const id = document.getElementById('employee-id').value;
     const name = document.getElementById('employee-name').value.trim();
+    const birthday = document.getElementById('employee-birthday')?.value.trim() || '';
     const prefShift = document.getElementById('employee-pref-shift').value;
     const color = document.getElementById('employee-color').value;
     const status = document.getElementById('employee-status').value;
@@ -123,18 +126,19 @@ class EmployeeManager {
     }
 
     const onCallDays = [];
-    let onCallShift = '1';
+    let onCallShift = '2';
 
     if (prefShift === 'PLANTONISTA') {
       if (document.getElementById('plantao-day-fri')?.checked) onCallDays.push('FRI');
       if (document.getElementById('plantao-day-sat')?.checked) onCallDays.push('SAT');
       if (document.getElementById('plantao-day-sun')?.checked) onCallDays.push('SUN');
-      onCallShift = document.getElementById('plantao-shift-select')?.value || '1';
+      onCallShift = document.getElementById('plantao-shift-select')?.value || '2';
     }
 
     const employeeData = {
       id: id || null,
       name: name.toUpperCase(),
+      birthday: birthday,
       prefShift: prefShift,
       onCallDays: onCallDays,
       onCallShift: onCallShift,
@@ -212,11 +216,12 @@ class EmployeeManager {
             ${emp.name.charAt(0)}
           </div>
           <div class="emp-row-info">
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
               <h4 style="margin: 0;">${emp.name}</h4>
               <span class="badge ${isActive ? 'badge-active' : 'badge-inactive'}" style="font-size: 0.65rem; padding: 1px 6px; border-radius: 4px; background: ${isActive ? 'rgba(16, 185, 129, 0.15)' : 'rgba(148, 163, 184, 0.15)'}; color: ${isActive ? '#10b981' : '#94a3b8'}; border: 1px solid ${isActive ? 'rgba(16, 185, 129, 0.3)' : 'rgba(148, 163, 184, 0.3)'};">
                 ${isActive ? 'Ativo' : 'Inativo'}
               </span>
+              ${emp.birthday ? `<span style="font-size: 0.68rem; color: #db2777; font-weight: 700; background: #fdf2f8; border: 1px solid #fbcfe8; padding: 1px 6px; border-radius: 4px; display: inline-flex; align-items: center; gap: 3px;">🎂 ${emp.birthday}</span>` : ''}
             </div>
             <span>${shiftDescription}</span>
           </div>
