@@ -67,7 +67,7 @@
           </div>
 
           <!-- BOTÃO PÚBLICO DE VISUALIZAÇÃO DE AÇÕES DA FARMÁCIA -->
-          <button id="btn-public-campaigns" class="btn btn-secondary-pill" title="Visualizar Ações e Campanhas da Farmácia" style="margin-left: 0.5rem;">
+          <button id="btn-public-campaigns" class="btn btn-secondary-pill" title="Visualizar Ações e Campanhas da Farmácia">
             <i data-lucide="target" style="color: #eab308;"></i>
             <span>Ações da Farmácia</span>
           </button>
@@ -78,6 +78,14 @@
 
       <!-- GRUPO DIREITO: AÇÕES DE ADMIN E BOTÃO ADMIN -->
       <div class="topbar-right-group">
+        <!-- RELATÓRIO DE FINS DE SEMANA E FOLGAS (DISPONÍVEL APENAS NO MODO ADMIN) -->
+        <div class="topbar-block block-report-action admin-only hidden">
+          <button id="btn-open-weekend-report" class="btn btn-secondary-pill" title="Ver Relatório de Fins de Semana e Folgas do Mês">
+            <i data-lucide="bar-chart-3"></i>
+            <span>Relatório</span>
+          </button>
+        </div>
+
         <!-- AÇÃO PRINCIPAL (GERAR ESCALA) -->
         <div class="topbar-block block-main-action admin-only hidden">
           <button id="btn-auto-generate" class="btn btn-emerald" title="Gerar escala automática para a equipe deste mês">
@@ -95,6 +103,12 @@
           </button>
           
           <div id="more-actions-dropdown" class="dropdown-menu more-actions-dropdown hidden">
+            <!-- 📊 Relatório -->
+            <button id="btn-dropdown-weekend-report" class="dropdown-item">
+              <i data-lucide="bar-chart-3"></i>
+              <span>Relatório Fins de Semana & Folgas</span>
+            </button>
+
             <!-- ⚙ Configurações -->
             <button id="btn-manage-team" class="dropdown-item">
               <i data-lucide="settings"></i>
@@ -330,12 +344,17 @@
           </div>
           <div>
             <h3>Ações e Campanhas da Farmácia</h3>
-            <span class="text-xs text-muted">Consulte a programação completa das ações de saúde e promoções</span>
+            <span class="text-xs text-muted" id="public-campaigns-subtitle">Consulte a programação completa das ações de saúde e promoções</span>
           </div>
         </div>
         <button type="button" class="btn-close-modal" data-modal="modal-public-campaigns"><i data-lucide="x"></i></button>
       </div>
       <div class="modal-body">
+        <!-- Visual Tag Banner indicando Mês Ativo (Público) vs Modo Admin -->
+        <div id="public-campaigns-mode-badge" style="margin-bottom: 0.85rem; padding: 0.55rem 0.85rem; border-radius: 8px; font-size: 0.78rem; font-weight: 700; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem;">
+          <!-- Dynamic banner rendered -->
+        </div>
+
         <div id="public-campaigns-list-container" style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 420px; overflow-y: auto; padding-right: 4px;">
           <!-- Dynamic items rendered -->
         </div>
@@ -643,6 +662,62 @@
           </div>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- MODAL: RELATÓRIO DE FINS DE SEMANA E FOLGAS (L1) -->
+  <div id="modal-weekend-report" class="modal-overlay hidden" data-no-backdrop-close="true">
+    <div class="modal-box modern-modal" style="max-width: 680px;">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-icon-badge" style="background: rgba(56, 189, 248, 0.15); color: #0284c7;">
+            <i data-lucide="bar-chart-3"></i>
+          </div>
+          <div>
+            <h3 id="weekend-report-modal-title">Relatório de Fins de Semana & Folgas</h3>
+            <span class="text-xs text-muted" id="weekend-report-modal-subtitle">Balanço analítico de plantões e folgas do mês</span>
+          </div>
+        </div>
+        <button class="btn-close-modal" data-modal="modal-weekend-report"><i data-lucide="x"></i></button>
+      </div>
+      <div class="modal-body" style="padding: 1rem 1.25rem;">
+        
+        <!-- Summary metrics banner -->
+        <div id="weekend-report-metrics-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 0.75rem; margin-bottom: 1.25rem;">
+          <!-- Rendered dynamically -->
+        </div>
+
+        <!-- Analytical table -->
+        <div style="overflow-x: auto; background: #ffffff; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+          <table id="weekend-report-table" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.82rem;">
+            <thead>
+              <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #475569; font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">
+                <th style="padding: 0.65rem 0.85rem;">Colaborador</th>
+                <th style="padding: 0.65rem 0.65rem; text-align: center; color: #e11d48;">Sábados</th>
+                <th style="padding: 0.65rem 0.65rem; text-align: center; color: #be123c;">Domingos</th>
+                <th style="padding: 0.65rem 0.65rem; text-align: center; color: #0f172a;">Total FDS</th>
+                <th style="padding: 0.65rem 0.65rem; text-align: center; color: #059669;">Sextas (Folga)</th>
+                <th style="padding: 0.65rem 0.85rem; text-align: center; color: #0284c7;">Total Dias</th>
+              </tr>
+            </thead>
+            <tbody id="weekend-report-tbody">
+              <!-- Rendered dynamically -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Informative note -->
+        <div style="margin-top: 1rem; padding: 0.6rem 0.75rem; background: rgba(56, 189, 248, 0.06); border-left: 3px solid #38bdf8; border-radius: 4px; font-size: 0.76rem; color: var(--text-muted);">
+          <strong style="color: #0284c7;">Regra Bethel L1:</strong> Revezamento contínuo de turnos e fins de semana com folgas garantidas para os colaboradores que folgam no sábado.
+        </div>
+
+      </div>
+      <div class="modal-footer" style="display: flex; justify-content: space-between; align-items: center;">
+        <button type="button" class="btn btn-ghost" data-modal="modal-weekend-report">Fechar</button>
+        <button type="button" class="btn btn-emerald" id="btn-print-weekend-report">
+          <i data-lucide="printer"></i> Imprimir Relatório
+        </button>
+      </div>
     </div>
   </div>
 
@@ -1879,9 +1954,163 @@ class CalendarManager {
       this.saveMonthTeam();
     });
 
+    document.getElementById('btn-open-weekend-report')?.addEventListener('click', () => {
+      this.openWeekendReport();
+    });
+
+    document.getElementById('btn-dropdown-weekend-report')?.addEventListener('click', () => {
+      this.openWeekendReport();
+    });
+
+    document.getElementById('btn-print-weekend-report')?.addEventListener('click', () => {
+      window.print();
+    });
+
     document.getElementById('btn-auto-generate')?.addEventListener('click', () => {
       this.openMonthTeamModal();
     });
+
+    const btnTeam = document.getElementById('btn-manage-team');
+    if (btnTeam) {
+      btnTeam.addEventListener('click', () => {
+        window.employeeManager?.render();
+        window.app?.openModal('modal-team-manager');
+      });
+    }
+  }
+
+  openWeekendReport() {
+    const yearMonthKey = `${this.currentYear}-${String(this.currentMonth).padStart(2, '0')}`;
+    const schedule = this.store.getMonthSchedule(yearMonthKey) || this.store.getSchedule(yearMonthKey);
+    const employees = this.store.getActiveEmployees();
+    const monthLabel = `${MONTH_NAMES[this.currentMonth - 1]} de ${this.currentYear}`;
+
+    const titleEl = document.getElementById('weekend-report-modal-title');
+    const subtitleEl = document.getElementById('weekend-report-modal-subtitle');
+    if (titleEl) titleEl.textContent = `Relatório de Fins de Semana & Folgas - ${monthLabel}`;
+    if (subtitleEl) subtitleEl.textContent = `Balanço analítico de plantões e folgas de ${monthLabel}`;
+
+    const stats = {};
+    employees.forEach(emp => {
+      const cleanName = (emp.name || '').trim().toUpperCase();
+      stats[cleanName] = {
+        emp: emp,
+        saturdays: 0,
+        sundays: 0,
+        weekendsTotal: 0,
+        fridayOffs: 0,
+        totalDaysWorked: 0
+      };
+    });
+
+    if (schedule && schedule.days) {
+      for (const dateKey in schedule.days) {
+        const day = schedule.days[dateKey];
+        const dayOfWeek = day.dayOfWeek; // 0=Dom, 6=Sáb, 5=Sex
+        const workersInDay = new Set();
+        const fridayOffWorkers = new Set();
+
+        if (day.slots) {
+          day.slots.forEach(slot => {
+            if (slot.workers) {
+              slot.workers.forEach(w => {
+                const name = (w.employeeName || '').trim().toUpperCase();
+                if (stats[name]) {
+                  if (w.color === 'GREEN') {
+                    if (dayOfWeek === 5) {
+                      fridayOffWorkers.add(name);
+                    }
+                  } else {
+                    workersInDay.add(name);
+                  }
+                }
+              });
+            }
+          });
+        }
+
+        workersInDay.forEach(name => {
+          stats[name].totalDaysWorked++;
+          if (dayOfWeek === 6) {
+            stats[name].saturdays++;
+            stats[name].weekendsTotal++;
+          } else if (dayOfWeek === 0) {
+            stats[name].sundays++;
+            stats[name].weekendsTotal++;
+          }
+        });
+
+        fridayOffWorkers.forEach(name => {
+          stats[name].fridayOffs++;
+        });
+      }
+    }
+
+    // Render Metrics Cards
+    const metricsGrid = document.getElementById('weekend-report-metrics-grid');
+    if (metricsGrid) {
+      let totalWeekendsAll = 0;
+      let totalFridayOffsAll = 0;
+      Object.values(stats).forEach(s => {
+        totalWeekendsAll += s.weekendsTotal;
+        totalFridayOffsAll += s.fridayOffs;
+      });
+
+      metricsGrid.innerHTML = `
+        <div style="background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 8px; padding: 0.75rem; text-align: center;">
+          <div style="font-size: 0.72rem; color: #0369a1; text-transform: uppercase; font-weight: 700;">Mês Ativo</div>
+          <div style="font-size: 1.1rem; font-weight: 800; color: #0284c7; margin-top: 0.2rem;">${MONTH_NAMES[this.currentMonth - 1]}</div>
+        </div>
+        <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 0.75rem; text-align: center;">
+          <div style="font-size: 0.72rem; color: #be123c; text-transform: uppercase; font-weight: 700;">Plantões FDS</div>
+          <div style="font-size: 1.1rem; font-weight: 800; color: #e11d48; margin-top: 0.2rem;">${totalWeekendsAll} plantões</div>
+        </div>
+        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 8px; padding: 0.75rem; text-align: center;">
+          <div style="font-size: 0.72rem; color: #047857; text-transform: uppercase; font-weight: 700;">Folgas Sexta</div>
+          <div style="font-size: 1.1rem; font-weight: 800; color: #059669; margin-top: 0.2rem;">${totalFridayOffsAll} folgas</div>
+        </div>
+        <div style="background: #f5f3ff; border: 1px solid #ddd6fe; border-radius: 8px; padding: 0.75rem; text-align: center;">
+          <div style="font-size: 0.72rem; color: #6d28d9; text-transform: uppercase; font-weight: 700;">Equipe L1</div>
+          <div style="font-size: 1.1rem; font-weight: 800; color: #7c3aed; margin-top: 0.2rem;">${employees.length} membros</div>
+        </div>
+      `;
+    }
+
+    // Render Table
+    const tbody = document.getElementById('weekend-report-tbody');
+    if (tbody) {
+      tbody.innerHTML = '';
+      Object.values(stats).forEach(st => {
+        const emp = st.emp;
+        const color = emp.color || '#0284c7';
+        const isPlantonista = emp.prefShift === 'PLANTONISTA';
+        const roleBadge = isPlantonista ? '<span style="font-size: 0.68rem; background: #ffedd5; color: #c2410c; padding: 2px 6px; border-radius: 4px; font-weight: 700;">Plantonista</span>' : '<span style="font-size: 0.68rem; background: #f1f5f9; color: #475569; padding: 2px 6px; border-radius: 4px; font-weight: 600;">Balconista</span>';
+
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid #e2e8f0';
+        tr.innerHTML = `
+          <td style="padding: 0.65rem 0.85rem;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: ${color}; display: inline-block;"></span>
+              <div>
+                <strong style="color: #0f172a; font-size: 0.85rem;">${emp.name}</strong>
+                <div style="margin-top: 2px;">${roleBadge}</div>
+              </div>
+            </div>
+          </td>
+          <td style="padding: 0.65rem 0.65rem; text-align: center; font-weight: 700; color: #e11d48;">${st.saturdays}</td>
+          <td style="padding: 0.65rem 0.65rem; text-align: center; font-weight: 700; color: #be123c;">${st.sundays}</td>
+          <td style="padding: 0.65rem 0.65rem; text-align: center; font-weight: 800; color: #0f172a; background: #fff1f2;">${st.weekendsTotal}</td>
+          <td style="padding: 0.65rem 0.65rem; text-align: center; font-weight: 800; color: #059669; background: #ecfdf5;">${st.fridayOffs}</td>
+          <td style="padding: 0.65rem 0.85rem; text-align: center; font-weight: 800; color: #0284c7; background: #f0f9ff;">${st.totalDaysWorked} dias</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window.app?.openModal('modal-weekend-report');
+    if (window.lucide) window.lucide.createIcons();
+  }
 
     document.getElementById('btn-clear-month')?.addEventListener('click', () => {
       if (confirm(`Deseja realmente limpar toda a escala de ${MONTH_NAMES[this.currentMonth - 1]} / ${this.currentYear}?`)) {
@@ -3731,6 +3960,16 @@ class App {
       if (form) form.dataset.isDirty = 'false';
       modal.classList.remove('hidden');
       if (window.lucide) window.lucide.createIcons();
+
+      if (modalId === 'modal-admin-login') {
+        setTimeout(() => {
+          const pin = document.getElementById('admin-pin');
+          if (pin) {
+            pin.focus();
+            pin.select();
+          }
+        }, 60);
+      }
     }
   }
 
@@ -3765,6 +4004,16 @@ class App {
       }
     });
 
+    document.getElementById('admin-pin')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const form = document.getElementById('form-admin-login');
+        if (form) {
+          form.dispatchEvent(new Event('submit', { cancelable: true }));
+        }
+      }
+    });
+
     document.getElementById('form-admin-login')?.addEventListener('submit', (e) => {
       e.preventDefault();
       const pin = document.getElementById('admin-pin')?.value;
@@ -3774,6 +4023,11 @@ class App {
         this.showToast('Modo Administrador ativado!', 'success');
       } else {
         document.getElementById('admin-login-error')?.classList.remove('hidden');
+        const pinInput = document.getElementById('admin-pin');
+        if (pinInput) {
+          pinInput.focus();
+          pinInput.select();
+        }
       }
     });
 
