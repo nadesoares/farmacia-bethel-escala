@@ -1018,6 +1018,7 @@ const DEFAULT_EMPLOYEES = [
     prefShift: 'NONE',
     color: '#ec4899',
     status: 'ACTIVE',
+    birthday: '02/10',
     createdAt: new Date().toISOString()
   },
   {
@@ -1034,6 +1035,50 @@ const DEFAULT_EMPLOYEES = [
 class Store {
   constructor() {
     this.init();
+  }
+
+  
+  getDefaultOctober2026Schedule() {
+    const days = {
+      "2026-10-01": { dayNumber: 1, dayOfWeek: 4, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }] }] },
+      "2026-10-02": { dayNumber: 2, dayOfWeek: 5, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }] }, { workers: [{ employeeName: 'LILIAN', color: 'GREEN' }] }] },
+      "2026-10-03": { dayNumber: 3, dayOfWeek: 6, slots: [{ workers: [{ employeeName: 'DJANE', color: 'RED' }] }, { workers: [] }, { workers: [] }] },
+      "2026-10-04": { dayNumber: 4, dayOfWeek: 0, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'RED' }] }, { workers: [] }, { workers: [] }] },
+      "2026-10-05": { dayNumber: 5, dayOfWeek: 1, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [{ employeeName: 'MAURICIO', color: 'GREEN' }] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }] }] },
+      "2026-10-06": { dayNumber: 6, dayOfWeek: 2, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [{ employeeName: 'MAURICIO', color: 'GREEN' }] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }] }] },
+      "2026-10-07": { dayNumber: 7, dayOfWeek: 3, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [{ employeeName: 'MAURICIO', color: 'GREEN' }] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }] }] },
+      "2026-10-08": { dayNumber: 8, dayOfWeek: 4, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [{ employeeName: 'MAURICIO', color: 'GREEN' }] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }] }] },
+      "2026-10-09": { dayNumber: 9, dayOfWeek: 5, slots: [{ workers: [{ employeeName: 'DJANE', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }] },
+      "2026-10-10": { dayNumber: 10, dayOfWeek: 6, slots: [{ workers: [] }, { workers: [] }, { workers: [{ employeeName: 'LILIAN', color: 'RED' }] }] },
+      "2026-10-11": { dayNumber: 11, dayOfWeek: 0, slots: [{ workers: [{ employeeName: 'DJANE', color: 'RED' }] }, { workers: [] }, { workers: [] }] },
+      "2026-10-12": { dayNumber: 12, dayOfWeek: 1, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [{ employeeName: 'MAURICIO', color: 'GREEN' }] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }] }] },
+      "2026-10-13": { dayNumber: 13, dayOfWeek: 2, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [{ employeeName: 'MAURICIO', color: 'GREEN' }] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }] }] },
+      "2026-10-14": { dayNumber: 14, dayOfWeek: 3, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [{ employeeName: 'MAURICIO', color: 'GREEN' }] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }] }] },
+      "2026-10-15": { dayNumber: 15, dayOfWeek: 4, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'MAURICIO', color: 'NORMAL' }] }] },
+      "2026-10-16": { dayNumber: 16, dayOfWeek: 5, slots: [{ workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }, { workers: [{ employeeName: 'DJANE', color: 'GREEN' }] }, { workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }] },
+      "2026-10-17": { dayNumber: 17, dayOfWeek: 6, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'RED' }] }, { workers: [] }, { workers: [{ employeeName: 'MAURICIO', color: 'RED' }] }] },
+      "2026-10-18": { dayNumber: 18, dayOfWeek: 0, slots: [{ workers: [{ employeeName: 'DJANE', color: 'RED' }] }, { workers: [] }, { workers: [] }] },
+      "2026-10-19": { dayNumber: 19, dayOfWeek: 1, slots: [{ workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'LILIAN', color: 'NORMAL' }] }] },
+      "2026-10-20": { dayNumber: 20, dayOfWeek: 2, slots: [{ workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'LILIAN', color: 'NORMAL' }] }] },
+      "2026-10-21": { dayNumber: 21, dayOfWeek: 3, slots: [{ workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }, { workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }] }] },
+      "2026-10-22": { dayNumber: 22, dayOfWeek: 4, slots: [{ workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }, { workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }] }] },
+      "2026-10-23": { dayNumber: 23, dayOfWeek: 5, slots: [{ workers: [{ employeeName: 'DJANE', color: 'NORMAL' }] }, { workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }] },
+      "2026-10-24": { dayNumber: 24, dayOfWeek: 6, slots: [{ workers: [] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'RED' }] }] },
+      "2026-10-25": { dayNumber: 25, dayOfWeek: 0, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'RED' }] }, { workers: [] }, { workers: [{ employeeName: 'MAURICIO', color: 'RED' }] }] },
+      "2026-10-26": { dayNumber: 26, dayOfWeek: 1, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'MAURICIO', color: 'NORMAL' }] }] },
+      "2026-10-27": { dayNumber: 27, dayOfWeek: 2, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'MAURICIO', color: 'NORMAL' }] }] },
+      "2026-10-28": { dayNumber: 28, dayOfWeek: 3, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'MAURICIO', color: 'NORMAL' }] }] },
+      "2026-10-29": { dayNumber: 29, dayOfWeek: 4, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'MAURICIO', color: 'NORMAL' }] }] },
+      "2026-10-30": { dayNumber: 30, dayOfWeek: 5, slots: [{ workers: [{ employeeName: 'DJANE', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }, { employeeName: 'LILIAN', color: 'NORMAL' }] }] },
+      "2026-10-31": { dayNumber: 31, dayOfWeek: 6, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'RED' }] }, { workers: [] }, { workers: [{ employeeName: 'MAURICIO', color: 'RED' }] }] }
+    };
+    return {
+      yearMonth: '2026-10',
+      year: 2026,
+      month: 10,
+      generatedAt: '2026-10-01T00:00:00.000Z',
+      days: days
+    };
   }
 
   getDefaultAugust2026Schedule() {
@@ -1095,6 +1140,13 @@ class Store {
     }
     if (!existingSchedules['2026-08']) {
       existingSchedules['2026-08'] = this.getDefaultAugust2026Schedule();
+    const oct1 = existingSchedules['2026-10'];
+    const oct1HasWorkers = oct1 && oct1.days && Object.values(oct1.days).some(d => (d.slots || []).some(s => (s.workers || []).length > 0));
+    if (!oct1HasWorkers) {
+      existingSchedules['2026-10'] = this.getDefaultOctober2026Schedule();
+      localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(existingSchedules));
+    }
+  
       localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(existingSchedules));
     }
     if (!localStorage.getItem(STORAGE_KEYS.ADMIN_PIN) || localStorage.getItem(STORAGE_KEYS.ADMIN_PIN) === '1234') {
@@ -1108,6 +1160,7 @@ class Store {
       '2026-08': this.getDefaultAugust2026Schedule()
     };
     localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(schedules));
+    window.syncManager?.pushToCloud();
     return DEFAULT_EMPLOYEES;
   }
 
@@ -1147,6 +1200,7 @@ class Store {
       employees.push(newEmp);
     }
     localStorage.setItem(STORAGE_KEYS.EMPLOYEES, JSON.stringify(employees));
+    window.syncManager?.pushToCloud();
     if (window.supabaseManager?.isConfigured()) {
       window.supabaseManager.saveEmployees(employees);
     }
@@ -1314,6 +1368,7 @@ class Store {
       }
     }
     localStorage.setItem(STORAGE_KEYS.CAMPAIGNS, JSON.stringify(campaigns));
+    window.syncManager?.pushToCloud();
     return campaign;
   }
 
@@ -4436,6 +4491,128 @@ class EmployeeManager {
 /**
  * APP.JS - Inicializador
  */
+
+/**
+ * CLOUD SYNC MANAGER - Sincronização em Nuvem (Vercel API + GitHub Cloud Gist)
+ * Sincroniza automaticamente alterações do Admin entre todos os PCs e celulares sem poluição visual.
+ */
+class SyncManager {
+  constructor(storeKey) {
+    this.storeKey = storeKey; // 'loja1' ou 'loja2'
+    this.isSyncing = false;
+    this.debounceTimer = null;
+    this.initAutoSync();
+  }
+
+  initAutoSync() {
+    // Sincroniza ao abrir a página
+    setTimeout(() => this.pullFromCloud(), 400);
+
+    // Sincroniza ao focar ou reabrir a aba do navegador
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        this.pullFromCloud(true);
+      }
+    });
+    window.addEventListener('focus', () => this.pullFromCloud(true));
+
+    // Liveness polling a cada 45 segundos para manter telas sempre idênticas
+    setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        this.pullFromCloud(true);
+      }
+    }, 45000);
+  }
+
+  async pullFromCloud(silent = false) {
+    if (this.isSyncing) return;
+    this.isSyncing = true;
+    try {
+      const res = await fetch('/api/sync?store=' + this.storeKey + '&t=' + Date.now());
+      if (!res.ok) { this.isSyncing = false; return; }
+      const json = await res.json();
+      if (!json.success || !json.data) { this.isSyncing = false; return; }
+
+      const cloud = json.data;
+      let hasUpdate = false;
+
+      // 1. Escalas
+      if (cloud.schedules && typeof cloud.schedules === 'object' && Object.keys(cloud.schedules).length > 0) {
+        const localSchedules = window.store?.getAllSchedules() || {};
+        let schedulesChanged = false;
+        for (const ym in cloud.schedules) {
+          const cSch = cloud.schedules[ym];
+          const lSch = localSchedules[ym];
+          if (!lSch || JSON.stringify(lSch) !== JSON.stringify(cSch)) {
+            localSchedules[ym] = cSch;
+            schedulesChanged = true;
+          }
+        }
+        if (schedulesChanged) {
+          localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(localSchedules));
+          hasUpdate = true;
+        }
+      }
+
+      // 2. Funcionários
+      if (Array.isArray(cloud.employees) && cloud.employees.length > 0) {
+        const localEmps = window.store?.getEmployees() || [];
+        if (JSON.stringify(localEmps) !== JSON.stringify(cloud.employees)) {
+          localStorage.setItem(STORAGE_KEYS.EMPLOYEES, JSON.stringify(cloud.employees));
+          hasUpdate = true;
+        }
+      }
+
+      // 3. Campanhas / Ações da Farmácia
+      if (Array.isArray(cloud.campaigns) && cloud.campaigns.length > 0) {
+        const localCamps = (typeof window.store?.getCampaigns === 'function') ? window.store.getCampaigns() : [];
+        if (JSON.stringify(localCamps) !== JSON.stringify(cloud.campaigns)) {
+          localStorage.setItem(STORAGE_KEYS.CAMPAIGNS, JSON.stringify(cloud.campaigns));
+          hasUpdate = true;
+        }
+      }
+
+      if (hasUpdate) {
+        window.calendarManager?.render();
+        window.employeeManager?.render();
+        if (!silent) {
+          window.app?.showToast('Escala atualizada em tempo real ✓', 'success');
+        }
+      }
+    } catch (e) {
+      console.warn('[SyncManager] Falha ao sincronizar nuvem:', e);
+    } finally {
+      this.isSyncing = false;
+    }
+  }
+
+  pushToCloud() {
+    clearTimeout(this.debounceTimer);
+    this.debounceTimer = setTimeout(async () => {
+      try {
+        const payload = {
+          store: this.storeKey,
+          schedules: window.store?.getAllSchedules() || {},
+          employees: window.store?.getEmployees() || [],
+          campaigns: (typeof window.store?.getCampaigns === 'function') ? window.store.getCampaigns() : []
+        };
+
+        const res = await fetch('/api/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          window.app?.showToast('Escala sincronizada na nuvem ✓', 'success');
+        }
+      } catch (e) {
+        console.warn('[SyncManager] Erro no envio cloud:', e);
+      }
+    }, 600);
+  }
+}
+
 class App {
   constructor() {
     this.store = window.store;
