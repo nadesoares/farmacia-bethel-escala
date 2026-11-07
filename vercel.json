@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "farmacia-bethel-escala",
+  "name": "betel1",
   "rewrites": [
     {
       "source": "/api/(.*)",
