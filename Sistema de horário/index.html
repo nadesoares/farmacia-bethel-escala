@@ -15,8 +15,8 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
   
-  <link rel="stylesheet" href="css/style.css?v=9.0">
-  <link rel="stylesheet" href="css/print.css?v=9.0" media="print">
+  <link rel="stylesheet" href="css/style.css?v=10.0">
+  <link rel="stylesheet" href="css/print.css?v=10.0" media="print">
 </head>
 <body>
 
@@ -66,6 +66,12 @@
             <i data-lucide="clock" class="icon-sm"></i>
             <span id="realtime-clock-text">--:--:--</span>
           </div>
+
+          <!-- INDICADOR VISUAL DE ESCALA SALVA NA NUVEM -->
+          <button type="button" id="cloud-sync-indicator" class="cloud-sync-badge status-empty" title="Clique para sincronizar com a nuvem agora">
+            <i data-lucide="cloud" id="cloud-sync-icon" class="icon-sm"></i>
+            <span id="cloud-sync-text">Sem escala</span>
+          </button>
         </div>
       </div>
 
@@ -994,8 +1000,9 @@ window.supabaseManager = new SupabaseManager();
  * STORE.JS - Gerenciamento de Estado e Persistência Local (LocalStorage)
  */
 const STORAGE_KEYS = {
-  EMPLOYEES: 'farmacia_escala_employees_v3',
-  SCHEDULES: 'farmacia_escala_schedules_v17',
+  EMPLOYEES: 'farmacia_escala_employees_v4',
+  SCHEDULES: 'farmacia_escala_schedules_v20',
+  OTHER_STORE_SCHEDULES: 'farmacia_escala_other_schedules_v20',
   ADMIN_PIN: 'farmacia_escala_admin_pin_v1',
   ADMIN_SESSION: 'farmacia_escala_admin_session_v1',
   CAMPAIGNS: 'farmacia_escala_campaigns_v1',
@@ -1018,6 +1025,7 @@ const DEFAULT_EMPLOYEES = [
     prefShift: 'NONE',
     color: '#ec4899',
     status: 'ACTIVE',
+    birthday: '02/10',
     createdAt: new Date().toISOString()
   },
   {
@@ -1036,67 +1044,20 @@ class Store {
     this.init();
   }
 
-  getDefaultAugust2026Schedule() {
-    const days = {
-      "2026-08-01": { dayNumber: 1, dayOfWeek: 6, slots: [{ workers: [{ employeeName: 'DJANE', color: 'RED' }] }, { workers: [] }, { workers: [{ employeeName: 'LILIAN', color: 'RED' }] }] },
-      "2026-08-02": { dayNumber: 2, dayOfWeek: 0, slots: [{ workers: [{ employeeName: 'MAURICIO', color: 'RED' }] }, { workers: [] }, { workers: [] }] },
-      "2026-08-03": { dayNumber: 3, dayOfWeek: 1, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'MAURICIO', color: 'NORMAL' }] }] },
-      "2026-08-04": { dayNumber: 4, dayOfWeek: 2, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'MAURICIO', color: 'NORMAL' }] }] },
-      "2026-08-05": { dayNumber: 5, dayOfWeek: 3, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'MAURICIO', color: 'NORMAL' }] }] },
-      "2026-08-06": { dayNumber: 6, dayOfWeek: 4, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'MAURICIO', color: 'NORMAL' }] }] },
-      "2026-08-07": { dayNumber: 7, dayOfWeek: 5, slots: [{ workers: [{ employeeName: 'DJANE', color: 'GREEN' }, { employeeName: 'MAURICIO', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }] },
-      "2026-08-08": { dayNumber: 8, dayOfWeek: 6, slots: [{ workers: [{ employeeName: 'MAURICIO', color: 'RED' }] }, { workers: [] }, { workers: [{ employeeName: 'LILIAN', color: 'RED' }] }] },
-      "2026-08-09": { dayNumber: 9, dayOfWeek: 0, slots: [{ workers: [{ employeeName: 'DJANE', color: 'RED' }] }, { workers: [] }, { workers: [] }] },
-      "2026-08-10": { dayNumber: 10, dayOfWeek: 1, slots: [{ workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'LILIAN', color: 'NORMAL' }] }] },
-      "2026-08-11": { dayNumber: 11, dayOfWeek: 2, slots: [{ workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'LILIAN', color: 'NORMAL' }] }] },
-      "2026-08-12": { dayNumber: 12, dayOfWeek: 3, slots: [{ workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'LILIAN', color: 'NORMAL' }] }] },
-      "2026-08-13": { dayNumber: 13, dayOfWeek: 4, slots: [{ workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'LILIAN', color: 'NORMAL' }] }] },
-      "2026-08-14": { dayNumber: 14, dayOfWeek: 5, slots: [{ workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'LILIAN', color: 'GREEN' }] }, { workers: [] }, { workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }] },
-      "2026-08-15": { dayNumber: 15, dayOfWeek: 6, slots: [{ workers: [{ employeeName: 'DJANE', color: 'RED' }] }, { workers: [] }, { workers: [{ employeeName: 'MAURICIO', color: 'RED' }] }] },
-      "2026-08-16": { dayNumber: 16, dayOfWeek: 0, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'RED' }] }, { workers: [] }, { workers: [] }] },
-      "2026-08-17": { dayNumber: 17, dayOfWeek: 1, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'MAURICIO', color: 'NORMAL' }] }] },
-      "2026-08-18": { dayNumber: 18, dayOfWeek: 2, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'MAURICIO', color: 'NORMAL' }] }] },
-      "2026-08-19": { dayNumber: 19, dayOfWeek: 3, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'MAURICIO', color: 'NORMAL' }] }] },
-      "2026-08-20": { dayNumber: 20, dayOfWeek: 4, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'MAURICIO', color: 'NORMAL' }] }] },
-      "2026-08-21": { dayNumber: 21, dayOfWeek: 5, slots: [{ workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'MAURICIO', color: 'GREEN' }] }, { workers: [] }, { workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }] },
-      "2026-08-22": { dayNumber: 22, dayOfWeek: 6, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'RED' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'RED' }] }] },
-      "2026-08-23": { dayNumber: 23, dayOfWeek: 0, slots: [{ workers: [{ employeeName: 'MAURICIO', color: 'RED' }] }, { workers: [] }, { workers: [] }] },
-      "2026-08-24": { dayNumber: 24, dayOfWeek: 1, slots: [{ workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'LILIAN', color: 'NORMAL' }] }] },
-      "2026-08-25": { dayNumber: 25, dayOfWeek: 2, slots: [{ workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'LILIAN', color: 'NORMAL' }] }] },
-      "2026-08-26": { dayNumber: 26, dayOfWeek: 3, slots: [{ workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'LILIAN', color: 'NORMAL' }] }] },
-      "2026-08-27": { dayNumber: 27, dayOfWeek: 4, slots: [{ workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'LILIAN', color: 'NORMAL' }] }] },
-      "2026-08-28": { dayNumber: 28, dayOfWeek: 5, slots: [{ workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'MAURICIO', color: 'NORMAL' }] }] },
-      "2026-08-29": { dayNumber: 29, dayOfWeek: 6, slots: [{ workers: [] }, { workers: [] }, { workers: [{ employeeName: 'MAURICIO', color: 'RED' }] }] },
-      "2026-08-30": { dayNumber: 30, dayOfWeek: 0, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'RED' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'RED' }] }] },
-      "2026-08-31": { dayNumber: 31, dayOfWeek: 1, slots: [{ workers: [{ employeeName: 'LILIAN', color: 'NORMAL' }] }, { workers: [] }, { workers: [{ employeeName: 'DJANE', color: 'NORMAL' }, { employeeName: 'MAURICIO', color: 'NORMAL' }] }] }
-    };
-    return {
-      yearMonth: '2026-08',
-      year: 2026,
-      month: 8,
-      generatedAt: '2026-08-01T00:00:00.000Z',
-      days: days
-    };
-  }
-
   init() {
+    // Limpa chaves antigas de escalas pré-preenchidas para iniciar 100% limpo
+    ['farmacia_escala_schedules_v17', 'farmacia_escala_schedules_v18', 'farmacia_escala_schedules_v19'].forEach(k => {
+      localStorage.removeItem(k);
+    });
+
     if (!localStorage.getItem(STORAGE_KEYS.EMPLOYEES)) {
       localStorage.setItem(STORAGE_KEYS.EMPLOYEES, JSON.stringify(DEFAULT_EMPLOYEES));
     }
-    const existingSchedules = this.getAllSchedules();
-    try {
-      if (window.PharmacyScheduler) {
-        const scheduler = new window.PharmacyScheduler(this);
-        existingSchedules['2026-07'] = scheduler.generateMonthSchedule(2026, 7);
-        localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(existingSchedules));
-      }
-    } catch (e) {
-      console.warn('Auto-geração de Julho/2026:', e);
+
+    if (!localStorage.getItem(STORAGE_KEYS.SCHEDULES)) {
+      localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify({}));
     }
-    if (!existingSchedules['2026-08']) {
-      existingSchedules['2026-08'] = this.getDefaultAugust2026Schedule();
-      localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(existingSchedules));
-    }
+
     if (!localStorage.getItem(STORAGE_KEYS.ADMIN_PIN) || localStorage.getItem(STORAGE_KEYS.ADMIN_PIN) === '1234') {
       localStorage.setItem(STORAGE_KEYS.ADMIN_PIN, 'Bd@9998');
     }
@@ -1104,10 +1065,8 @@ class Store {
 
   resetDefaultEmployees() {
     localStorage.setItem(STORAGE_KEYS.EMPLOYEES, JSON.stringify(DEFAULT_EMPLOYEES));
-    const schedules = {
-      '2026-08': this.getDefaultAugust2026Schedule()
-    };
-    localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(schedules));
+    localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify({}));
+    window.syncManager?.pushToCloud();
     return DEFAULT_EMPLOYEES;
   }
 
@@ -1147,6 +1106,7 @@ class Store {
       employees.push(newEmp);
     }
     localStorage.setItem(STORAGE_KEYS.EMPLOYEES, JSON.stringify(employees));
+    window.syncManager?.pushToCloud();
     if (window.supabaseManager?.isConfigured()) {
       window.supabaseManager.saveEmployees(employees);
     }
@@ -1160,6 +1120,7 @@ class Store {
       employees[index].status = 'INACTIVE';
       employees[index].updatedAt = new Date().toISOString();
       localStorage.setItem(STORAGE_KEYS.EMPLOYEES, JSON.stringify(employees));
+      window.syncManager?.pushToCloud();
       if (window.supabaseManager?.isConfigured()) {
         window.supabaseManager.saveEmployees(employees);
       }
@@ -1174,6 +1135,7 @@ class Store {
       employees[index].status = (employees[index].status === 'ACTIVE') ? 'INACTIVE' : 'ACTIVE';
       employees[index].updatedAt = new Date().toISOString();
       localStorage.setItem(STORAGE_KEYS.EMPLOYEES, JSON.stringify(employees));
+      window.syncManager?.pushToCloud();
       if (window.supabaseManager?.isConfigured()) {
         window.supabaseManager.saveEmployees(employees);
       }
@@ -1186,7 +1148,6 @@ class Store {
     if (schedule && Array.isArray(schedule.selectedEmployeeIds) && schedule.selectedEmployeeIds.length > 0) {
       return schedule.selectedEmployeeIds;
     }
-    // Padrão: todos os colaboradores que estiverem ativos no cadastro
     return this.getActiveEmployees().map(e => e.id);
   }
 
@@ -1223,7 +1184,32 @@ class Store {
   }
 
   getMonthSchedule(yearMonthKey) {
-    return this.getAllSchedules()[yearMonthKey] || null;
+    const schedules = this.getAllSchedules();
+    return schedules[yearMonthKey] || null;
+  }
+
+  getSchedule(yearMonthKey) {
+    return this.getMonthSchedule(yearMonthKey);
+  }
+
+  getOtherStoreAllSchedules() {
+    try {
+      const data = localStorage.getItem(STORAGE_KEYS.OTHER_STORE_SCHEDULES);
+      return data ? JSON.parse(data) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  setOtherStoreAllSchedules(schedulesObj) {
+    if (schedulesObj && typeof schedulesObj === 'object') {
+      localStorage.setItem(STORAGE_KEYS.OTHER_STORE_SCHEDULES, JSON.stringify(schedulesObj));
+    }
+  }
+
+  getOtherStoreMonthSchedule(yearMonthKey) {
+    const schedules = this.getOtherStoreAllSchedules();
+    return schedules[yearMonthKey] || null;
   }
 
   saveMonthSchedule(yearMonthKey, scheduleData) {
@@ -1234,6 +1220,7 @@ class Store {
     }
     schedules[yearMonthKey] = scheduleData;
     localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(schedules));
+    window.syncManager?.pushToCloud();
     if (window.supabaseManager?.isConfigured()) {
       window.supabaseManager.saveSchedule(yearMonthKey, scheduleData);
     }
@@ -1257,6 +1244,7 @@ class Store {
     const schedules = this.getAllSchedules();
     delete schedules[yearMonthKey];
     localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(schedules));
+    window.syncManager?.pushToCloud();
   }
 
   isAdmin() {
@@ -1314,6 +1302,7 @@ class Store {
       }
     }
     localStorage.setItem(STORAGE_KEYS.CAMPAIGNS, JSON.stringify(campaigns));
+    window.syncManager?.pushToCloud();
     return campaign;
   }
 
@@ -1321,6 +1310,7 @@ class Store {
     let campaigns = this.getCampaigns();
     campaigns = campaigns.filter(c => c.id !== id);
     localStorage.setItem(STORAGE_KEYS.CAMPAIGNS, JSON.stringify(campaigns));
+    window.syncManager?.pushToCloud();
   }
 }
 
@@ -1336,9 +1326,7 @@ class PharmacyScheduler {
   }
 
   generateMonthSchedule(year, month) {
-    if (year === 2026 && month === 8) {
-      return this.store.getDefaultAugust2026Schedule();
-    }
+    // Matriz Padrão Oficial da Loja 1 baseada em Novembro/2026 (Imagem 1) com sequência contínua para os próximos meses
 
     const yearMonthKey = `${year}-${String(month).padStart(2, '0')}`;
     const rawActiveEmployees = this.store.getMonthEmployees(yearMonthKey);
@@ -2020,6 +2008,9 @@ class CalendarManager {
     document.getElementById('btn-prev-month')?.addEventListener('click', () => this.changeMonth(-1));
     document.getElementById('btn-next-month')?.addEventListener('click', () => this.changeMonth(1));
     document.getElementById('btn-today')?.addEventListener('click', () => this.goToToday());
+    document.getElementById('cloud-sync-indicator')?.addEventListener('click', () => {
+      window.syncManager?.pullFromCloud(false);
+    });
     this.bindCampaignEvents();
 
     const monthPicker = document.getElementById('month-picker');
@@ -2289,32 +2280,87 @@ class CalendarManager {
     if (window.lucide) window.lucide.createIcons();
   }
 
-  openConsolidatedTodayModal() {
+  updateCloudSyncIndicator(scheduleArg) {
+    const badge = document.getElementById('cloud-sync-indicator');
+    const textEl = document.getElementById('cloud-sync-text');
+    const iconEl = document.getElementById('cloud-sync-icon');
+    if (!badge || !textEl) return;
+
+    const yearMonthKey = this.getYearMonthKey();
+    const schedule = scheduleArg !== undefined ? scheduleArg : this.store.getMonthSchedule(yearMonthKey);
+    const hasWorkers = Boolean(
+      schedule &&
+      schedule.days &&
+      Object.values(schedule.days).some(d => (d.slots || []).some(s => (s.workers || []).length > 0))
+    );
+
+    const syncState = window.syncManager?.syncState || 'idle';
+    badge.classList.remove('status-synced', 'status-syncing', 'status-empty', 'status-error');
+
+    if (syncState === 'syncing') {
+      badge.classList.add('status-syncing');
+      textEl.textContent = 'Sincronizando...';
+      if (iconEl) iconEl.setAttribute('data-lucide', 'refresh-cw');
+    } else if (syncState === 'error') {
+      badge.classList.add('status-error');
+      textEl.textContent = 'Erro na nuvem';
+      if (iconEl) iconEl.setAttribute('data-lucide', 'cloud-off');
+    } else if (hasWorkers) {
+      badge.classList.add('status-synced');
+      textEl.textContent = 'Salva na nuvem ✓';
+      if (iconEl) iconEl.setAttribute('data-lucide', 'cloud');
+    } else {
+      badge.classList.add('status-empty');
+      textEl.textContent = 'Sem escala';
+      if (iconEl) iconEl.setAttribute('data-lucide', 'cloud');
+    }
+
+    if (window.lucide) window.lucide.createIcons();
+  }
+
+  renderConsolidatedTodayContainers() {
     const today = new Date();
     const tYear = today.getFullYear();
     const tMonth = today.getMonth() + 1;
     const tDate = today.getDate();
     const todayKey = `${tYear}-${String(tMonth).padStart(2, '0')}-${String(tDate).padStart(2, '0')}`;
     const yearMonthKey = `${tYear}-${String(tMonth).padStart(2, '0')}`;
+
+    const localSchedule = this.store.getMonthSchedule(yearMonthKey);
+    const otherSchedule = this.store.getOtherStoreMonthSchedule(yearMonthKey);
+
+    const scheduleL1 = localSchedule;
+    const scheduleL2 = otherSchedule;
+
+    const dayDataL1 = scheduleL1?.days?.[todayKey];
+    const dayDataL2 = scheduleL2?.days?.[todayKey];
+
+    const containerL1 = document.getElementById('consolidated-l1-shifts');
+    if (containerL1) {
+      containerL1.innerHTML = this.renderConsolidatedDayShifts(dayDataL1, 'L1');
+    }
+
+    const containerL2 = document.getElementById('consolidated-l2-shifts');
+    if (containerL2) {
+      containerL2.innerHTML = this.renderConsolidatedDayShifts(dayDataL2, 'L2');
+    }
+  }
+
+  openConsolidatedTodayModal() {
+    const today = new Date();
+    const tYear = today.getFullYear();
+    const tMonth = today.getMonth() + 1;
+    const tDate = today.getDate();
     const dayNames = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
     const todayFormatted = `${dayNames[today.getDay()]}, ${String(tDate).padStart(2, '0')} de ${MONTH_NAMES[tMonth - 1]} de ${tYear}`;
 
     const subtitleEl = document.getElementById('consolidated-today-date-subtitle');
     if (subtitleEl) subtitleEl.textContent = todayFormatted;
 
-    // Obter Escala do L1 (Local)
-    const scheduleL1 = this.store.getMonthSchedule(yearMonthKey) || this.store.getSchedule(yearMonthKey);
-    const dayDataL1 = scheduleL1?.days?.[todayKey];
-    const containerL1 = document.getElementById('consolidated-l1-shifts');
-    if (containerL1) {
-      containerL1.innerHTML = this.renderConsolidatedDayShifts(dayDataL1, 'L1');
-    }
+    this.renderConsolidatedTodayContainers();
 
-    // Obter Escala do L2
-    const containerL2 = document.getElementById('consolidated-l2-shifts');
-    if (containerL2) {
-      containerL2.innerHTML = this.renderConsolidatedL2DayShifts(today, todayKey);
-    }
+    // Atualiza em segundo plano da nuvem para garantir dados em tempo real das duas lojas
+    window.syncManager?.pullFromCloud(true);
 
     // Renderizar Banner de Aniversário de Hoje caso haja aniversariantes
     const birthdayBanner = document.getElementById('consolidated-today-birthday-banner');
@@ -2354,7 +2400,8 @@ class CalendarManager {
   }
 
   renderConsolidatedDayShifts(dayData, storeName) {
-    if (!dayData || !dayData.slots || dayData.slots.length === 0) {
+    const hasAnyWorker = dayData && dayData.slots && dayData.slots.some(s => (s.workers || []).length > 0);
+    if (!hasAnyWorker) {
       return '<p style="color: #64748b; margin: 0.5rem 0; font-style: italic;">Nenhum horário registrado para esta data.</p>';
     }
 
@@ -2391,53 +2438,24 @@ class CalendarManager {
     return html;
   }
 
-  renderConsolidatedL2DayShifts(today, todayKey) {
-    const dow = today.getDay(); // 0=Dom, 6=Sáb
-    let l2Html = '';
-    
-    if (dow === 0) {
-      l2Html = `
-        <div style="background: #ffffff; padding: 0.4rem 0.6rem; border-radius: 6px; border: 1px solid #cbd5e1; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-          <strong style="font-size: 0.76rem; color: #0f172a; display: block; margin-bottom: 3px;">1º Turno (Manhã):</strong>
-          <div style="display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">
-            <span class="worker-chip color-red" style="font-size: 0.76rem; padding: 2px 7px;">NATÁLIA</span>
-          </div>
-        </div>
-        <div style="background: #ffffff; padding: 0.4rem 0.6rem; border-radius: 6px; border: 1px solid #cbd5e1; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-          <strong style="font-size: 0.76rem; color: #0f172a; display: block; margin-bottom: 3px;">2º Turno (Plantonista):</strong>
-          <div style="display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">
-            <span class="worker-chip color-red" style="font-size: 0.76rem; padding: 2px 7px;">CARLOS</span>
-          </div>
-        </div>
-        <div style="background: #ffffff; padding: 0.4rem 0.6rem; border-radius: 6px; border: 1px solid #cbd5e1; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-          <strong style="font-size: 0.76rem; color: #0f172a; display: block; margin-bottom: 3px;">3º Turno (Noite):</strong>
-          <div style="display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">
-            <span class="worker-chip color-red" style="font-size: 0.76rem; padding: 2px 7px;">LÍVIA</span>
-          </div>
-        </div>
-      `;
-    } else {
-      l2Html = `
-        <div style="background: #ffffff; padding: 0.4rem 0.6rem; border-radius: 6px; border: 1px solid #cbd5e1; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-          <strong style="font-size: 0.76rem; color: #0f172a; display: block; margin-bottom: 3px;">1º Turno (Manhã):</strong>
-          <div style="display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">
-            <span class="worker-chip color-normal" style="font-size: 0.76rem; padding: 2px 7px;">MATHEUS</span>
-            <span class="slot-slash" style="color: #64748b; font-weight: 700; margin: 0 4px; align-self: center;">/</span>
-            <span class="worker-chip color-normal" style="font-size: 0.76rem; padding: 2px 7px;">SALETE</span>
-          </div>
-        </div>
-        <div style="background: #ffffff; padding: 0.4rem 0.6rem; border-radius: 6px; border: 1px solid #cbd5e1; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-          <strong style="font-size: 0.76rem; color: #0f172a; display: block; margin-bottom: 3px;">3º Turno (Noite):</strong>
-          <div style="display: flex; flex-wrap: wrap; gap: 4px; align-items: center;">
-            <span class="worker-chip color-normal" style="font-size: 0.76rem; padding: 2px 7px;">LÍVIA</span>
-            <span class="slot-slash" style="color: #64748b; font-weight: 700; margin: 0 4px; align-self: center;">/</span>
-            <span class="worker-chip color-normal" style="font-size: 0.76rem; padding: 2px 7px;">NATÁLIA</span>
-          </div>
-        </div>
-      `;
+  formatDayShiftsForWhatsApp(dayData) {
+    const hasAnyWorker = dayData && dayData.slots && dayData.slots.some(s => (s.workers || []).length > 0);
+    if (!hasAnyWorker) {
+      return '  • Nenhum horário registrado para esta data\n';
     }
-
-    return l2Html;
+    const shiftLabels = ['1º Turno (Manhã)', '2º Turno (Intermediário)', '3º Turno (Noite)'];
+    let text = '';
+    dayData.slots.forEach((s, idx) => {
+      const workers = s.workers || [];
+      if (workers.length === 0) {
+        if (idx === 1) return; // Omitir 2º turno vazio no WhatsApp
+        text += `  • *${shiftLabels[idx]}*: Sem escala\n`;
+      } else {
+        const names = workers.map(w => w.employeeName + (w.color === 'GREEN' ? ' (Folga)' : '')).join(' / ');
+        text += `  • *${shiftLabels[idx]}*: ${names}\n`;
+      }
+    });
+    return text;
   }
 
   shareTodayWhatsApp() {
@@ -2450,25 +2468,14 @@ class CalendarManager {
     const dayNames = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
     const todayFormatted = `${dayNames[today.getDay()]}, ${String(tDate).padStart(2, '0')}/${String(tMonth).padStart(2, '0')}/${tYear}`;
 
-    const schedule = this.store.getMonthSchedule(yearMonthKey) || this.store.getSchedule(yearMonthKey);
-    const dayData = schedule?.days?.[todayKey];
+    const localSchedule = this.store.getMonthSchedule(yearMonthKey);
+    const otherSchedule = this.store.getOtherStoreMonthSchedule(yearMonthKey);
 
-    let l1Text = '';
-    if (dayData && dayData.slots) {
-      const shiftLabels = ['1º Turno (Manhã)', '2º Turno (Intermediário)', '3º Turno (Noite)'];
-      dayData.slots.forEach((s, idx) => {
-        const workers = s.workers || [];
-        if (workers.length === 0) {
-          if (idx === 1) return; // Omitir 2º turno vazio no WhatsApp
-          l1Text += `  • *${shiftLabels[idx]}*: Sem escala\n`;
-        } else {
-          const names = workers.map(w => w.employeeName + (w.color === 'GREEN' ? ' (Folga)' : '')).join(' / ');
-          l1Text += `  • *${shiftLabels[idx]}*: ${names}\n`;
-        }
-      });
-    } else {
-      l1Text = '  • Escala em aberto\n';
-    }
+    const scheduleL1 = localSchedule;
+    const scheduleL2 = otherSchedule;
+
+    const l1Text = this.formatDayShiftsForWhatsApp(scheduleL1?.days?.[todayKey]);
+    const l2Text = this.formatDayShiftsForWhatsApp(scheduleL2?.days?.[todayKey]);
 
     const todayBirthdays = this.checkTodayBirthdays();
     let bText = '';
@@ -2477,7 +2484,7 @@ class CalendarManager {
       bText = `\n🎉🎂 *Aniversariante(s) de Hoje:* ${bNames}! Parabéns! 🎈\n`;
     }
 
-    const message = `*💊 FARMÁCIA BETHEL - ESCALA DE HOJE*\n📅 ${todayFormatted}\n${bText}\n*🏪 BETHEL LOJA 1:*\n${l1Text}\n*🏪 BETHEL LOJA 2:*\n  • *Manhã*: MATHEUS / SALETE\n  • *Noite*: LÍVIA / NATÁLIA\n\n_Acompanhe ao vivo em:_\nhttps://farmacia-bethel-escala.vercel.app`;
+    const message = `*💊 FARMÁCIA BETHEL - ESCALA DE HOJE*\n📅 ${todayFormatted}\n${bText}\n*🏪 BETHEL LOJA 1:*\n${l1Text}\n*🏪 BETHEL LOJA 2:*\n${l2Text}\n_Acompanhe ao vivo em:_\nhttps://farmacia-bethel-escala.vercel.app`;
 
     const encoded = encodeURIComponent(message);
     window.open(`https://api.whatsapp.com/send?text=${encoded}`, '_blank');
@@ -2568,6 +2575,7 @@ class CalendarManager {
     this.renderHolidaysFooter();
     this.renderCampaignsFooter();
     this.renderBirthdaysFooter();
+    this.updateCloudSyncIndicator(schedule);
 
     // Disparar confetes em tela cheia na primeira abertura se hoje houver aniversariante
     if (!this.birthdayCelebrated) {
@@ -3787,6 +3795,17 @@ class CalendarManager {
     return `Esta ação está cadastrada ${periodText}.`;
   }
 
+  isCampaignActiveInMonth(camp, year, month) {
+    if (!camp) return false;
+    const daysInMonth = new Date(year, month, 0).getDate();
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateKey = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+      const matches = this.getCampaignStatusForDate(dateKey, [camp]);
+      if (matches && matches.length > 0) return true;
+    }
+    return false;
+  }
+
   openPublicCampaignsModal() {
     this.renderPublicCampaignsList();
     const btnAdminCamp = document.getElementById('btn-open-admin-campaigns');
@@ -4436,6 +4455,157 @@ class EmployeeManager {
 /**
  * APP.JS - Inicializador
  */
+
+/**
+ * CLOUD SYNC MANAGER - Sincronização em Nuvem (Vercel API + GitHub Cloud Gist)
+ * Sincroniza automaticamente alterações do Admin entre todos os PCs e celulares sem poluição visual.
+ */
+class SyncManager {
+  constructor(storeKey) {
+    this.storeKey = storeKey; // 'loja1' ou 'loja2'
+    this.isSyncing = false;
+    this.syncState = 'idle';
+    this.debounceTimer = null;
+    this.initAutoSync();
+  }
+
+  setSyncState(state) {
+    this.syncState = state;
+    window.calendarManager?.updateCloudSyncIndicator();
+  }
+
+  initAutoSync() {
+    // Sincroniza ao abrir a página
+    setTimeout(() => this.pullFromCloud(true), 250);
+
+    // Sincroniza ao focar ou reabrir a aba do navegador
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        this.pullFromCloud(true);
+      }
+    });
+    window.addEventListener('focus', () => this.pullFromCloud(true));
+
+    // Liveness polling a cada 45 segundos para manter telas sempre idênticas
+    setInterval(() => {
+      if (document.visibilityState === 'visible') {
+        this.pullFromCloud(true);
+      }
+    }, 45000);
+  }
+
+  async pullFromCloud(silent = false) {
+    if (this.isSyncing) return;
+    this.isSyncing = true;
+    if (!silent) this.setSyncState('syncing');
+    try {
+      const res = await fetch('/api/sync?store=' + this.storeKey + '&t=' + Date.now(), { cache: 'no-store' });
+      if (!res.ok) {
+        this.setSyncState('error');
+        this.isSyncing = false;
+        return;
+      }
+      const json = await res.json();
+      if (!json.success || !json.data) {
+        this.setSyncState('idle');
+        this.isSyncing = false;
+        return;
+      }
+
+      const cloud = json.data;
+      let hasUpdate = false;
+
+      // 1. Escalas da loja atual (suporta tanto novas escalas quanto exclusão/reset)
+      if (cloud.schedules && typeof cloud.schedules === 'object') {
+        const localSchedules = window.store?.getAllSchedules() || {};
+        if (JSON.stringify(localSchedules) !== JSON.stringify(cloud.schedules)) {
+          localStorage.setItem(STORAGE_KEYS.SCHEDULES, JSON.stringify(cloud.schedules));
+          hasUpdate = true;
+        }
+      }
+
+      // 1b. Escalas da outra filial (para o modal Plantão de Hoje e WhatsApp em tempo real)
+      if (json.otherData && json.otherData.schedules && typeof json.otherData.schedules === 'object') {
+        window.store?.setOtherStoreAllSchedules(json.otherData.schedules);
+      }
+
+      // 2. Funcionários
+      if (Array.isArray(cloud.employees) && cloud.employees.length > 0) {
+        const localEmps = window.store?.getEmployees() || [];
+        if (JSON.stringify(localEmps) !== JSON.stringify(cloud.employees)) {
+          localStorage.setItem(STORAGE_KEYS.EMPLOYEES, JSON.stringify(cloud.employees));
+          hasUpdate = true;
+        }
+      }
+
+      // 3. Campanhas / Ações da Farmácia (suporta inclusive quando todas são removidas)
+      if (Array.isArray(cloud.campaigns)) {
+        const localCamps = (typeof window.store?.getCampaigns === 'function') ? window.store.getCampaigns() : [];
+        if (JSON.stringify(localCamps) !== JSON.stringify(cloud.campaigns)) {
+          localStorage.setItem(STORAGE_KEYS.CAMPAIGNS, JSON.stringify(cloud.campaigns));
+          hasUpdate = true;
+        }
+      }
+
+      this.setSyncState('synced');
+
+      if (hasUpdate) {
+        window.calendarManager?.render();
+        window.employeeManager?.render();
+      } else {
+        window.calendarManager?.updateCloudSyncIndicator();
+      }
+
+      // Se o modal Plantão de Hoje estiver aberto, atualiza os cards das duas lojas
+      const consolidatedModal = document.getElementById('modal-consolidated-today');
+      if (consolidatedModal && !consolidatedModal.classList.contains('hidden')) {
+        window.calendarManager?.renderConsolidatedTodayContainers();
+        if (window.lucide) window.lucide.createIcons();
+      }
+
+      if (!silent) {
+        window.app?.showToast('Sincronizado com a nuvem ✓', 'success');
+      }
+    } catch (e) {
+      console.warn('[SyncManager] Falha ao sincronizar nuvem:', e);
+      this.setSyncState('error');
+    } finally {
+      this.isSyncing = false;
+    }
+  }
+
+  pushToCloud() {
+    clearTimeout(this.debounceTimer);
+    this.setSyncState('syncing');
+    this.debounceTimer = setTimeout(async () => {
+      try {
+        const payload = {
+          store: this.storeKey,
+          schedules: window.store?.getAllSchedules() || {},
+          employees: window.store?.getEmployees() || [],
+          campaigns: (typeof window.store?.getCampaigns === 'function') ? window.store.getCampaigns() : []
+        };
+
+        const res = await fetch('/api/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          this.setSyncState('synced');
+          window.app?.showToast('Escala sincronizada na nuvem ✓', 'success');
+        } else {
+          this.setSyncState('error');
+        }
+      } catch (e) {
+        console.warn('[SyncManager] Erro no envio cloud:', e);
+        this.setSyncState('error');
+      }
+    }, 350);
+  }
+}
+
 class App {
   constructor() {
     this.store = window.store;
@@ -4450,6 +4620,7 @@ class App {
     this.bindAdminAuth();
     this.bindTopControls();
 
+    window.syncManager = new SyncManager('loja1');
     window.calendarManager = new CalendarManager(this.store, this.scheduler);
     window.employeeManager = new EmployeeManager(this.store);
     // ExportManager é instanciado no DOMContentLoaded para evitar duplicidade
